@@ -1,0 +1,49 @@
+
+<ChannelControl>:
+    orientation: 'vertical'
+    Label:
+        id: output_voltage
+        font_size: 50
+        text: "15.000V"
+    Label:
+        id: output_current
+        font_size: 50
+        text: "0.000A"
+    Label:
+        id: output_power
+        font_size: 50
+        text: "0.000W"
+    GridLayout:
+        canvas.after:
+            Line:
+                rectangle: self.x+1,self.y+1,self.width-1,self.height-1
+        cols: 2
+        Label:
+            text: 'Set Voltage'
+        Label:
+            text: '30.0V'
+        Label:
+            text: 'Set Current'
+        Label:
+            text: '3.0'
+    Button:
+        id: enableButton
+        font_size: 50
+        text: "Enabled" if root.output_enabled() else "Disabled"
+        on_press: root.enable_clicked()
+
+<ControlWindow>:
+    channel1: channel1
+    channel2: channel2
+    channel3: channel3
+
+    BoxLayout:
+        orientation: 'horizontal'
+        ChannelControl:
+            id: channel1
+        ChannelControl:
+            id: channel2
+        ChannelControl:
+            id: channel3
+
+
