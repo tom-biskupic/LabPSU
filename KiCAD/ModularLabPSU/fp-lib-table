@@ -1,0 +1,13 @@
+(fp_lib_table
+  (lib (name ab2_sot)(type KiCad)(uri "$(KIPRJMOD)\\ab2_sot.pretty")(options "")(descr ""))
+  (lib (name welwyn-oar1)(type KiCad)(uri "$(KIPRJMOD)\\welwyn-oar1.pretty")(options "")(descr ""))
+  (lib (name DiodesIncGBJ1506)(type KiCad)(uri "$(KIPRJMOD)\\DiodesIncGBJ1506.pretty")(options "")(descr ""))
+  (lib (name DiodesIncDF06M)(type KiCad)(uri "$(KIPRJMOD)\\DiodesIncDF06M.pretty")(options "")(descr ""))
+  (lib (name BournsMF-R500)(type KiCad)(uri "$(KIPRJMOD)\\BournsMF-R500.pretty")(options "")(descr ""))
+  (lib (name LittleFuseV275LA20P)(type KiCad)(uri "$(KIPRJMOD)\\LittleFuseV275LA20P.pretty")(options "")(descr ""))
+  (lib (name murataCeramicResonators)(type KiCad)(uri "$(KIPRJMOD)\\murataCeramicResonators.pretty")(options "")(descr ""))
+  (lib (name RS5mmClampTerminals)(type KiCad)(uri "$(KIPRJMOD)\\RS5mmClampTerminals.pretty")(options "")(descr ""))
+  (lib (name hf115F)(type KiCad)(uri "$(KIPRJMOD)\\hf115F.pretty")(options "")(descr ""))
+  (lib (name MOLEXusb_mini_b_otg)(type KiCad)(uri "$(KIPRJMOD)\\MOLEXusb_mini_b_otg.pretty")(options "")(descr ""))
+  (lib (name rs4700uF63V)(type KiCad)(uri "$(KIPRJMOD)\\rs4700uF63V.pretty")(options "")(descr ""))
+)
