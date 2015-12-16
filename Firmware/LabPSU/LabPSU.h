@@ -106,8 +106,10 @@ private:
 	
     void setThirtyVoltMode(const bool enable);
     void initADC() const;
-	
 	uint16_t readADC( const AD7705ADC::Channel channel ) const;
+
+	void setVoltageADC(const float voltage);
+	void setCurrentADC(const float current);
 	
 	float	m_setVoltage;
 	float	m_currentLimit;

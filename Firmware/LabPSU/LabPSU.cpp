@@ -42,6 +42,7 @@ namespace
     //
     const int BIAS_VOLTAGE_CTRL_PIN = 6;
     const int RELAY_CONTROL_PIN = 7;
+	const int CONST_CURRENT_MODE_PIN=5;
     
 	const int DAC_SS_PIN=1;
 	const int ADC_SS_PIN=0;
@@ -172,13 +173,20 @@ LabPSU::LabPSU() :	m_setVoltage(0.0f),
     //  Set the relay and bias control as outputs
     //
     DDRD |= (1 << BIAS_VOLTAGE_CTRL_PIN) | ( 1<< RELAY_CONTROL_PIN );
+	
+	//
+	//	Set the constant current mode pin as an input
+	//
+	DDRD &= ~(1 << CONST_CURRENT_MODE_PIN);
 }
 
 void LabPSU::init()
 {
     setThirtyVoltMode(false);
     m_dac.reset();
-    
+    setOutputVoltageLimit(m_setVoltage);
+	setCurrentLimit(m_currentLimit);
+	
     //initADC();    
 }
 
@@ -203,16 +211,27 @@ void LabPSU::setThirtyVoltMode(const bool enable)
 
 void LabPSU::setOutputVoltageLimit(const float value)
 {
-	m_setVoltage = value;
+	if ( m_setVoltage != value )
+	{
+		m_setVoltage = value;
 
-    setThirtyVoltMode(value > THIRTY_VOLT_MODE_THRESHOLD);
+		if ( m_outputEnabled )
+		{
+			setVoltageADC(value);
+		}
+	}
+}
 
-	uint16_t count = m_voltsLinearizer.valueToCode(value);
-    printf("Setting DAC A to 0x%x\r\n",count);
+
+void LabPSU::setVoltageADC(const float voltage)
+{
+	setThirtyVoltMode(voltage > THIRTY_VOLT_MODE_THRESHOLD);
+	uint16_t count = m_voltsLinearizer.valueToCode(voltage);
+	printf("Setting DAC A to 0x%x\r\n",count);
 
 	m_dac.setOutput(count,VOLTAGE_DAC_CHANNEL);
 }
-	
+
 const float LabPSU::getOutputVoltageLimit() const
 {
 	return m_setVoltage;
@@ -221,24 +240,32 @@ const float LabPSU::getOutputVoltageLimit() const
 float LabPSU::getOutputVoltage() const
 {
 	uint16_t code = readADC(VOLTAGE_ADC_CHANNEL);
-	
 	return m_voltsADCLinearizer.codeToValue(code);
-	
-	//
-	//	Need to use a linearizer here probably. Just do this for now.
-	//
-	//return 30.0 * (float)value / (float)0xffff;
 }
 
 void LabPSU::setCurrentLimit(const float value)
 {
-	m_currentLimit = value;
-	
+	if ( m_currentLimit != value )
+	{
+		m_currentLimit = value;
+		
+		if ( m_outputEnabled )
+		{
+			setCurrentADC(value);
+		}
+	}
+}
+
+void LabPSU::setCurrentADC(const float value)
+{
+	//
+	//	TODO: Use a linearizer
+	//
 	uint16_t count = round(value/m_ampsPerStep);
 	printf("Setting DAC B to 0x%x\r\n",count);
-	m_dac.setOutput(count,CURRENT_DAC_CHANNEL);
+	m_dac.setOutput(count,CURRENT_DAC_CHANNEL);\
 }
-	
+
 const float LabPSU::getCurrentLimit() const
 {
 	return m_currentLimit;
@@ -268,11 +295,21 @@ const float LabPSU::getOutputCurrent() const
 	
 void LabPSU::enableOutput(const bool enable )
 {
-	m_outputEnabled = enable;
+	if ( enable != m_outputEnabled )
+	{
+		m_outputEnabled = enable;
 	
-	//
-	//	Set output TBD
-	//
+		if ( m_outputEnabled )
+		{
+			setVoltageADC(m_setVoltage);
+			setCurrentADC(m_currentLimit);
+		}
+		else
+		{
+			setVoltageADC(0.0f);
+			setCurrentADC(0.0f);
+		}
+	}
 }
 	
 const bool LabPSU::isOutputEnabled() const
@@ -282,7 +319,7 @@ const bool LabPSU::isOutputEnabled() const
 
 bool LabPSU::isInCurrentLimit()
 {
-	return false;
+	return ((PORTD & (1<<CONST_CURRENT_MODE_PIN)) != 0);
 }
 
 void LabPSU::initADC() const

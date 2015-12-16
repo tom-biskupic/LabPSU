@@ -15,14 +15,14 @@ CommandFactory::CommandFactory( LabPSU *psu )
 		m_currentSetCommand(psu), 
 		m_voltageGetCommand(psu),
 		m_currentGetCommand(psu),
-        m_calVoltageADCZeroCommand(psu)
+		m_outputEnableCommand(psu)
 {
 	memset(m_commandArray,'\0',sizeof(m_commandArray)/sizeof(m_commandArray[0]));
 	addCommand(&m_voltageSetCommand);
     addCommand(&m_currentSetCommand);
 	addCommand(&m_voltageGetCommand);
 	addCommand(&m_currentGetCommand);
-    addCommand(&m_calVoltageADCZeroCommand);
+	addCommand(&m_outputEnableCommand);
 }
 
 Command *CommandFactory::getCommand( const char *commandName ) const

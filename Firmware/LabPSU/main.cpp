@@ -34,15 +34,8 @@ int main(void)
     
     printf("Tom's Lab Power Supply\r\n");
     
-    int i=1;
     while(1)
     {
-        _delay_ms(100.0);
-        //
-        //printf("%d\r\n",i++);
-//
-        //psu.setOutputVoltageLimit(10.0f);
-
         commandInterpreter.processNextCommand();
     }        
 }

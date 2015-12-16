@@ -10,6 +10,12 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+namespace
+{
+	const char *TRUE_NAME = "true";
+	const char *FALSE_NAME = "false";
+}
+
 Command::Command(const char *commandName, LabPSU *psu) : m_psu(psu), m_commandName(commandName)
 {
 	
@@ -17,7 +23,7 @@ Command::Command(const char *commandName, LabPSU *psu) : m_psu(psu), m_commandNa
 
 bool Command::handlesThis( const char *command ) const
 {
-	return strncasecmp(m_commandName,command,strlen(m_commandName)) == 0;
+	return strcasecmp(m_commandName,command) == 0;
 }
 
 void Command::handleSetCommand( const char *params )
@@ -46,6 +52,11 @@ bool Command::parseFloatParam( float& value, const char *valueAsString) const
 	return true;
 }
 
+void Command::parseBool(bool& value, const char *valueAsString) const
+{
+	value = ( strcasecmp(valueAsString,TRUE_NAME) == 0 );
+}
+
 bool Command::withinRange(float min,float max,float value) const
 {
 	if ( value >= min && value <= max )
@@ -60,4 +71,9 @@ bool Command::withinRange(float min,float max,float value) const
 void Command::printFloat(float value) const
 {
 	printf("%s=%f\r\n",m_commandName,(double)value);
+}
+
+void Command::printBool(bool value) const
+{
+	printf("%s=%s\r\n",m_commandName,value ? TRUE_NAME : FALSE_NAME);
 }

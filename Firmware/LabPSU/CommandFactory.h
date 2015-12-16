@@ -13,7 +13,7 @@
 #include "CurrentSetCommand.h"
 #include "VoltageGetCommand.h"
 #include "CurrentGetCommand.h"
-#include "CalibrateVoltageADCZeroCommand.h"
+#include "OutputEnableCommand.h"
 
 class CommandFactory
 {
@@ -46,9 +46,8 @@ private:
     CurrentSetCommand   m_currentSetCommand;
 	VoltageGetCommand   m_voltageGetCommand;
 	CurrentGetCommand   m_currentGetCommand;
-    
-    CalibrateVoltageADCZeroCommand m_calVoltageADCZeroCommand;
-    
+	OutputEnableCommand m_outputEnableCommand;
+	    
 	Command				*m_commandArray[MAX_COMMANDS];
 };
 
