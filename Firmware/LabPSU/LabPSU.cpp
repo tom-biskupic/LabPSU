@@ -319,7 +319,14 @@ const bool LabPSU::isOutputEnabled() const
 
 bool LabPSU::isInCurrentLimit()
 {
-	return ((PORTD & (1<<CONST_CURRENT_MODE_PIN)) != 0);
+    if ( m_outputEnabled )
+    {
+	    return ((PIND & (1<<CONST_CURRENT_MODE_PIN)) != 0);
+    }
+    else
+    {
+        return false;
+    }        
 }
 
 void LabPSU::initADC() const
