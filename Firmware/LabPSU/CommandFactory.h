@@ -14,6 +14,7 @@
 #include "VoltageGetCommand.h"
 #include "CurrentGetCommand.h"
 #include "OutputEnableCommand.h"
+#include "InCurrentLimitCommand.h"
 
 class CommandFactory
 {
@@ -47,6 +48,7 @@ private:
 	VoltageGetCommand   m_voltageGetCommand;
 	CurrentGetCommand   m_currentGetCommand;
 	OutputEnableCommand m_outputEnableCommand;
+    InCurrentLimitCommand m_inCurrentLimitCommand;
 	    
 	Command				*m_commandArray[MAX_COMMANDS];
 };

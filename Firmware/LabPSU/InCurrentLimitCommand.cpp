@@ -11,7 +11,7 @@
 
 namespace
 {
-	const char *IN_CURRENT_LIMIT_COMMAND_NAME = "Enable";
+	const char *IN_CURRENT_LIMIT_COMMAND_NAME = "CCMode";
 }
 
 InCurrentLimitCommand::InCurrentLimitCommand(LabPSU *psu) : Command(IN_CURRENT_LIMIT_COMMAND_NAME,psu)

@@ -15,28 +15,36 @@ CommandFactory::CommandFactory( LabPSU *psu )
 		m_currentSetCommand(psu), 
 		m_voltageGetCommand(psu),
 		m_currentGetCommand(psu),
-		m_outputEnableCommand(psu)
+		m_outputEnableCommand(psu),
+        m_inCurrentLimitCommand(psu)
 {
-	memset(m_commandArray,'\0',sizeof(m_commandArray)/sizeof(m_commandArray[0]));
+    for(int i=0;i<MAX_COMMANDS;i++)
+    {
+        m_commandArray[i] = NULL;
+    }
+            
 	addCommand(&m_voltageSetCommand);
     addCommand(&m_currentSetCommand);
 	addCommand(&m_voltageGetCommand);
 	addCommand(&m_currentGetCommand);
 	addCommand(&m_outputEnableCommand);
+    addCommand(&m_inCurrentLimitCommand);
 }
 
 Command *CommandFactory::getCommand( const char *commandName ) const
 {
 	for(int i=0;i<MAX_COMMANDS;i++)
 	{
-		if ( m_commandArray[i] == NULL )
+        Command *nextCommand = m_commandArray[i];
+        
+		if ( nextCommand == NULL )
 		{
 			return NULL;
 		}
 		
-		if ( m_commandArray[i]->handlesThis(commandName))
+		if ( nextCommand->handlesThis(commandName))
 		{
-			return m_commandArray[i];
+			return nextCommand;
 		}
 	}	
 	
