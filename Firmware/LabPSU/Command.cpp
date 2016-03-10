@@ -52,9 +52,31 @@ bool Command::parseFloatParam( float& value, const char *valueAsString) const
 	return true;
 }
 
+bool Command::parseHexParam( unsigned int& value, const char *valueAsString) const
+{
+    if (  sscanf(valueAsString,"%x",&value) != 1 )
+    {
+        printf("Invalid param : %s\r\n",valueAsString);
+        return false;
+    }
+    
+    return true;
+}
+
 void Command::parseBool(bool& value, const char *valueAsString) const
 {
 	value = ( strcasecmp(valueAsString,TRUE_NAME) == 0 );
+}
+
+bool Command::withinRange(unsigned int min,unsigned int max,unsigned int value) const
+{
+    if ( value >= min && value <= max )
+    {
+        return true;
+    }
+    
+    printf("%s : Value %d is outside of range %d to %d\r\n",m_commandName,value,min,max);
+    return false;
 }
 
 bool Command::withinRange(float min,float max,float value) const

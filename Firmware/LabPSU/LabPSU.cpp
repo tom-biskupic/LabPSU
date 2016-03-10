@@ -52,26 +52,40 @@ namespace
 	
     Linearizer::Point VOLTS_POINTS[] =
 	{
- 		{0x0,		+6.67462243E-03},
- 		{0x878,		+9.97950583E-01},
- 		{0x10fb,		+1.99597810E+00},
- 		{0x197d,		+2.99327013E+00},
- 		{0x2200,		+3.99115619E+00},
- 		{0x2a83,		+4.98904250E+00},
- 		{0x2a83,		+4.98904132E+00},
- 		{0x3b89,		+6.98480286E+00},
- 		{0x4c8e,		+8.97990683E+00},
- 		{0x5d93,		+1.09748723E+01},
- 		{0x6e99,		+1.29705096E+01},
- 		{0x7f9e,		+1.49652618E+01},
- 		{0x907d,		+1.69439974E+01},
- 		{0xa184,		+1.89398320E+01},
- 		{0xb28c,		+2.09362116E+01},
- 		{0xc392,		+2.29314486E+01},
- 		{0xd499,		+2.49271145E+01},
- 		{0xe59f,		+2.69223353E+01},
- 		{0xf6a4,		+2.89169182E+01}
- 	};
+		{0x0,		    +1.17590640E-02},
+		{0x7ff,		+9.40177747E-01},
+		{0xffe,		+1.87743827E+00},
+		{0x17fd,		+2.81477950E+00},
+		{0x1ffc,		+3.75216770E+00},
+		{0x27fb,		+4.68946553E+00},
+		{0x2ffa,		+5.62678085E+00},
+		{0x37f9,		+6.56406812E+00},
+		{0x3ff8,		+7.50145700E+00},
+		{0x47f7,		+8.43868950E+00},
+		{0x4ff6,		+9.37601271E+00},
+		{0x57f5,		+1.03132273E+01},
+		{0x5ff4,		+1.12505271E+01},
+		{0x67f3,		+1.21882230E+01},
+		{0x6ff2,		+1.31252916E+01},
+		{0x77f1,		+1.40623678E+01},
+		{0x7ff0,		+1.49995497E+01},
+		{0x87ef,		+1.59377774E+01},
+		{0x8fee,		+1.68749290E+01},
+		{0x97ed,		+1.78119898E+01},
+		{0x9fec,		+1.87490699E+01},
+		{0xa7eb,		+1.96862159E+01},
+		{0xafea,		+2.06232978E+01},
+		{0xb7e9,		+2.15603995E+01},
+		{0xbfe8,		+2.24974797E+01},
+		{0xc7e7,		+2.34345509E+01},
+		{0xcfe6,		+2.43716721E+01},
+		{0xd7e5,		+2.53088281E+01},
+		{0xdfe4,		+2.62458910E+01},
+		{0xe7e3,		+2.71830544E+01},
+		{0xefe2,		+2.81200973E+01},
+		{0xf7e1,		+2.90570186E+01},
+		{0xffe0,		+2.99936415E+01}
+	};
      
 	int NUM_VOLTS_POINTS = sizeof(VOLTS_POINTS)/sizeof(VOLTS_POINTS[0]);
 	
@@ -187,7 +201,7 @@ void LabPSU::init()
     setOutputVoltageLimit(m_setVoltage);
 	setCurrentLimit(m_currentLimit);
 	
-    //initADC();    
+    initADC();    
 }
 
 void LabPSU::setThirtyVoltMode(const bool enable)
@@ -217,17 +231,24 @@ void LabPSU::setOutputVoltageLimit(const float value)
 
 		if ( m_outputEnabled )
 		{
-			setVoltageADC(value);
+			setVoltageDAC(value);
 		}
 	}
 }
 
+void LabPSU::setVoltageDACCount(unsigned int count)
+{
+    m_outputEnabled=true;
+    m_setVoltage = (30.0/(float)0xffff) * (float)count;
+	setThirtyVoltMode(m_setVoltage > THIRTY_VOLT_MODE_THRESHOLD);
+    m_dac.setOutput(count,VOLTAGE_DAC_CHANNEL);
+}
 
-void LabPSU::setVoltageADC(const float voltage)
+void LabPSU::setVoltageDAC(const float voltage)
 {
 	setThirtyVoltMode(voltage > THIRTY_VOLT_MODE_THRESHOLD);
 	uint16_t count = m_voltsLinearizer.valueToCode(voltage);
-	printf("Setting DAC A to 0x%x\r\n",count);
+	//printf("Setting DAC A to 0x%x\r\n",count);
 
 	m_dac.setOutput(count,VOLTAGE_DAC_CHANNEL);
 }
@@ -251,18 +272,18 @@ void LabPSU::setCurrentLimit(const float value)
 		
 		if ( m_outputEnabled )
 		{
-			setCurrentADC(value);
+			setCurrentDAC(value);
 		}
 	}
 }
 
-void LabPSU::setCurrentADC(const float value)
+void LabPSU::setCurrentDAC(const float value)
 {
 	//
 	//	TODO: Use a linearizer
 	//
 	uint16_t count = round(value/m_ampsPerStep);
-	printf("Setting DAC B to 0x%x\r\n",count);
+	//printf("Setting DAC B to 0x%x\r\n",count);
 	m_dac.setOutput(count,CURRENT_DAC_CHANNEL);\
 }
 
@@ -301,13 +322,13 @@ void LabPSU::enableOutput(const bool enable )
 	
 		if ( m_outputEnabled )
 		{
-			setVoltageADC(m_setVoltage);
-			setCurrentADC(m_currentLimit);
+			setVoltageDAC(m_setVoltage);
+			setCurrentDAC(m_currentLimit);
 		}
 		else
 		{
-			setVoltageADC(0.0f);
-			setCurrentADC(0.0f);
+			setVoltageDAC(0.0f);
+			setCurrentDAC(0.0f);
 		}
 	}
 }
@@ -368,7 +389,7 @@ uint16_t LabPSU::readADC( const AD7705ADC::Channel channel ) const
     
 	uint16_t value = m_adc.getValue(channel);
     
-    printf("Raw ADC Value Read %u from ADC channel %d\r\n",value,channel);
+    //printf("Raw ADC Value Read %u from ADC channel %d\r\n",value,channel);
 	
     return value;
 }

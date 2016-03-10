@@ -42,7 +42,14 @@ public:
 	Returns the current output voltage read from the DAC
 	*/
 	float getOutputVoltage() const;
-	
+
+    /*
+    Sets the output voltage DAC to a specified count.
+    Only used for calibration. Also sets the output voltage
+    by guessing a linear mapping
+    */	
+    void setVoltageDACCount(unsigned int count);
+
 	/*
 	Set the current limit
 	*/
@@ -108,8 +115,8 @@ private:
     void initADC() const;
 	uint16_t readADC( const AD7705ADC::Channel channel ) const;
 
-	void setVoltageADC(const float voltage);
-	void setCurrentADC(const float current);
+	void setVoltageDAC(const float voltage);
+	void setCurrentDAC(const float current);
 	
 	float	m_setVoltage;
 	float	m_currentLimit;
