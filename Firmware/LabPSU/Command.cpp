@@ -63,6 +63,11 @@ bool Command::parseHexParam( unsigned int& value, const char *valueAsString) con
     return true;
 }
 
+void Command::printHex( const uint16_t value ) const
+{
+    printf("%s=%04X\r\n",m_commandName,value);   
+}
+
 void Command::parseBool(bool& value, const char *valueAsString) const
 {
 	value = ( strcasecmp(valueAsString,TRUE_NAME) == 0 );

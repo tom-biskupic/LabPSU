@@ -17,7 +17,7 @@ on the output voltage DAC. This is primarily used for calibration
 */
 class VoltageDACCommand : public Command
 {
-    public:
+public:
     VoltageDACCommand(LabPSU *psu);
     
     virtual void handleSetCommand( const char *params );

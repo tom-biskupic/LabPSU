@@ -83,6 +83,12 @@ protected:
 	*/
 	void printBool(bool value) const;
 	
+    /*
+    Prints the command name=value where the value passed is converted
+    to a 4 digit hexadecimal.
+    */
+    void printHex( const uint16_t value ) const;
+
 	LabPSU		*m_psu;
 	const char	*m_commandName;
 };

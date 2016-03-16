@@ -44,6 +44,12 @@ public:
 	float getOutputVoltage() const;
 
     /*
+    Returns the DAC count value for the PSU output voltage
+    Used for calibration.
+    */
+    uint16_t getOutputVoltageCount() const;
+    
+    /*
     Sets the output voltage DAC to a specified count.
     Only used for calibration. Also sets the output voltage
     by guessing a linear mapping

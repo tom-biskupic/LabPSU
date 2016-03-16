@@ -17,7 +17,8 @@ CommandFactory::CommandFactory( LabPSU *psu )
 		m_currentGetCommand(psu),
 		m_outputEnableCommand(psu),
         m_inCurrentLimitCommand(psu),
-        m_voltageDACCommand(psu)
+        m_voltageDACCommand(psu),
+        m_voltageADCCommand(psu)
 {
     for(int i=0;i<MAX_COMMANDS;i++)
     {
@@ -31,6 +32,7 @@ CommandFactory::CommandFactory( LabPSU *psu )
 	addCommand(&m_outputEnableCommand);
     addCommand(&m_inCurrentLimitCommand);
     addCommand(&m_voltageDACCommand);
+    addCommand(&m_voltageADCCommand);
 }
 
 Command *CommandFactory::getCommand( const char *commandName ) const

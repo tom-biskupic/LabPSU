@@ -16,6 +16,7 @@
 #include "OutputEnableCommand.h"
 #include "InCurrentLimitCommand.h"
 #include "VoltageDACCommand.h"
+#include "VoltageADCCommand.h"
 
 class CommandFactory
 {
@@ -51,6 +52,7 @@ private:
 	OutputEnableCommand m_outputEnableCommand;
     InCurrentLimitCommand m_inCurrentLimitCommand;
 	VoltageDACCommand   m_voltageDACCommand;
+    VoltageADCCommand   m_voltageADCCommand;
     
 	Command				*m_commandArray[MAX_COMMANDS];
 };
