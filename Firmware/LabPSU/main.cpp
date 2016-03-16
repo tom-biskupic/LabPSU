@@ -22,7 +22,7 @@
 
 int main(void)
 {
-	SerialSetup serialSetup;
+    SerialSetup serialSetup;
     LabPSU      psu;
     CommandInterpreter  commandInterpreter(&psu);
     
