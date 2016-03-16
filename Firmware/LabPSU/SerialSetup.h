@@ -18,12 +18,12 @@ via the serial port.
 class SerialSetup
 {
 public:
-	SerialSetup();
+    SerialSetup();
 private:
-	SerialSetup( const SerialSetup &c );
-	SerialSetup& operator=( const SerialSetup &c );
-	
-	FILE m_uart_io;
+    SerialSetup( const SerialSetup &c );
+    SerialSetup& operator=( const SerialSetup &c );
+    
+    FILE m_uart_io;
 };
 
 #endif //__SERIALSETUP_H__

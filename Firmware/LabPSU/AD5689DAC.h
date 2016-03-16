@@ -25,7 +25,7 @@ public:
         DAC_BOTH = 0x9
     };
             
-	AD5689DAC(int selectPin);
+    AD5689DAC(int selectPin);
     
     /*
     Sets the output of the DAC channel specified to the value specified.

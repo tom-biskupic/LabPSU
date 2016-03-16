@@ -57,7 +57,7 @@ public:
     By default we are MSB first, SPI Master and interrupts
     are disabled.
     */
-	SPIDevice(bool master, int selectPin);
+    SPIDevice(bool master, int selectPin);
 
     /*
     Sets the SPI Mode (0-2) which sets the clock phase and polarity

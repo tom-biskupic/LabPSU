@@ -18,11 +18,11 @@ the voltage ADC converter. This is used during PSU calibration.
 class VoltageADCCommand : public Command
 {
 public:
-	VoltageADCCommand(LabPSU *psu);
-	
-	virtual void handleSetCommand( const char *params );
-	
-	virtual void handleGetCommand() const;
+    VoltageADCCommand(LabPSU *psu);
+    
+    virtual void handleSetCommand( const char *params );
+    
+    virtual void handleGetCommand() const;
         
 };
 #endif //__VOLTAGEADCCOMMAND_H__

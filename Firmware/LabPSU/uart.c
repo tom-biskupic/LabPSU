@@ -70,19 +70,19 @@ Date        Description
 =========================================================================
 05/11/2009  Changed all existing UARTx_RECEIVE_INTERRUPT and UARTx_TRANSMIT_INTERRUPT
               macros to use the "_vect" format introduced in AVR-Libc
-			  v1.4.0.  Had to split the 3290 and 6490 out of their existing
-			  macro due to an inconsistency in the UART0_RECEIVE_INTERRUPT 
-			  vector name (seems like a typo: USART_RX_vect for the 3290/6490
-			  vice USART0_RX_vect for the others in the macro).
-			Verified all existing macro register names against the device
-			  header files in AVR-Libc v1.6.6 to catch any inconsistencies.
+              v1.4.0.  Had to split the 3290 and 6490 out of their existing
+              macro due to an inconsistency in the UART0_RECEIVE_INTERRUPT 
+              vector name (seems like a typo: USART_RX_vect for the 3290/6490
+              vice USART0_RX_vect for the others in the macro).
+            Verified all existing macro register names against the device
+              header files in AVR-Libc v1.6.6 to catch any inconsistencies.
 05/12/2009  Added support for 48P, 88P, 168P, and 328P by adding them to the
                existing 48/88/168 macro.
-			Added Arduino-style available() and flush() functions for both
-			supported UARTs.  Really wanted to keep them out of the library, so
-			that it would be as close as possible to Peter Fleury's original
-			library, but has scoping issues accessing internal variables from
-			another program.  Go C!
+            Added Arduino-style available() and flush() functions for both
+            supported UARTs.  Really wanted to keep them out of the library, so
+            that it would be as close as possible to Peter Fleury's original
+            library, but has scoping issues accessing internal variables from
+            another program.  Go C!
 05/13/2009  Changed Interrupt Service Routine label from the old "SIGNAL" to
                the "ISR" format introduced in AVR-Libc v1.4.0.
 
@@ -403,8 +403,8 @@ void uart_init(unsigned int baudrate)
     /* Set baud rate */
     if ( baudrate & 0x8000 )
     {
-    	 UART0_STATUS = (1<<U2X);  //Enable 2x speed 
-    	 baudrate &= ~0x8000;
+         UART0_STATUS = (1<<U2X);  //Enable 2x speed 
+         baudrate &= ~0x8000;
     }
     UBRRH = (unsigned char)(baudrate>>8);
     UBRRL = (unsigned char) baudrate;
@@ -423,9 +423,9 @@ void uart_init(unsigned int baudrate)
     /* Set baud rate */
     if ( baudrate & 0x8000 ) 
     {
-   		UART0_STATUS = (1<<U2X0);  //Enable 2x speed 
-   		baudrate &= ~0x8000;
-   	}
+        UART0_STATUS = (1<<U2X0);  //Enable 2x speed 
+        baudrate &= ~0x8000;
+    }
     UBRR0H = (unsigned char)(baudrate>>8);
     UBRR0L = (unsigned char) baudrate;
 
@@ -443,8 +443,8 @@ void uart_init(unsigned int baudrate)
     /* set baud rate */
     if ( baudrate & 0x8000 ) 
     {
-    	UART0_STATUS = (1<<U2X);  //Enable 2x speed 
-    	baudrate &= ~0x8000;
+        UART0_STATUS = (1<<U2X);  //Enable 2x speed 
+        baudrate &= ~0x8000;
     }
     UBRRHI = (unsigned char)(baudrate>>8);
     UBRR   = (unsigned char) baudrate;
@@ -646,7 +646,7 @@ void uart1_init(unsigned int baudrate)
     /* Set baud rate */
     if ( baudrate & 0x8000 ) 
     {
-    	UART1_STATUS = (1<<U2X1);  //Enable 2x speed 
+        UART1_STATUS = (1<<U2X1);  //Enable 2x speed 
       baudrate &= ~0x8000;
     }
     UBRR1H = (unsigned char)(baudrate>>8);

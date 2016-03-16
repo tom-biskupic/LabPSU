@@ -21,40 +21,40 @@
 class CommandFactory
 {
 public:
-	CommandFactory( LabPSU *psu );
+    CommandFactory( LabPSU *psu );
 
-	/*
-	Returns the Command handler that will process the command
-	with the name provided or NULL if the command is not
-	supported.
-	*/
-	Command *getCommand( const char *commandName ) const;
-		
+    /*
+    Returns the Command handler that will process the command
+    with the name provided or NULL if the command is not
+    supported.
+    */
+    Command *getCommand( const char *commandName ) const;
+        
 private:
 
-	/*
-	Adds a command to the command array (used for searching)
-	*/
-	void addCommand( Command *command );
-		
-	//
-	//	Maximum number of commands we can support. Update as required
-	//
-	enum 
-	{
-		MAX_COMMANDS=10
-	};
-	
-	VoltageSetCommand	m_voltageSetCommand;
+    /*
+    Adds a command to the command array (used for searching)
+    */
+    void addCommand( Command *command );
+        
+    //
+    //	Maximum number of commands we can support. Update as required
+    //
+    enum 
+    {
+        MAX_COMMANDS=10
+    };
+    
+    VoltageSetCommand	m_voltageSetCommand;
     CurrentSetCommand   m_currentSetCommand;
-	VoltageGetCommand   m_voltageGetCommand;
-	CurrentGetCommand   m_currentGetCommand;
-	OutputEnableCommand m_outputEnableCommand;
+    VoltageGetCommand   m_voltageGetCommand;
+    CurrentGetCommand   m_currentGetCommand;
+    OutputEnableCommand m_outputEnableCommand;
     InCurrentLimitCommand m_inCurrentLimitCommand;
-	VoltageDACCommand   m_voltageDACCommand;
+    VoltageDACCommand   m_voltageDACCommand;
     VoltageADCCommand   m_voltageADCCommand;
     
-	Command				*m_commandArray[MAX_COMMANDS];
+    Command				*m_commandArray[MAX_COMMANDS];
 };
 
 #endif //__COMMANDFACTORY_H__
