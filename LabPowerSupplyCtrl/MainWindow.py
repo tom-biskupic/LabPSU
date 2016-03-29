@@ -5,7 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 
 from NumericalValuePopup import NumericalValuePopup
-
+from PowerSupplyChannel import PowerSupplyChannel
 
 class ChannelControl(BoxLayout):
 
@@ -42,16 +42,24 @@ class ChannelControl(BoxLayout):
         view.open()
         pass
 
+    def bind_to_psu(self,channel):
+        self.channel = channel
+
 class ControlWindow(BoxLayout):
     channel1 = ObjectProperty(None)
     channel2 = ObjectProperty(None)
     channel3 = ObjectProperty(None)
 
+    def bind_channels(self):
+        self.channel1.bind_to_psu( PowerSupplyChannel("/dev/tty.usbmodem1411"))
+        self.channel1.bind_to_psu( PowerSupplyChannel("/dev/tty.usbmodem1421"))
+        self.channel1.bind_to_psu( PowerSupplyChannel("/dev/tty.usbmodem1431"))
 
 class LabPowerSupplyCtrlApp(App):
 
     def build(self):
         control_window = ControlWindow()
+        control_window.bind_channels()
         Window.full_screen = 1
         Window.size = (800,600)
         return control_window

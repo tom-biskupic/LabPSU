@@ -13,7 +13,9 @@ class PowerSupplyChannel():
 
     def __init__(self,file_name):
         self.usb_device_filename = file_name
-        self.tty = open(self.usb_device_filename,"r+")
+        try
+            self.tty = open(self.usb_device_filename,"r+")
+
 
     def get_set_voltage(self):
         return self.call_get_command_float(self.VSET_COMMAND)
