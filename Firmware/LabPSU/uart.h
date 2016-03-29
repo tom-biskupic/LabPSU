@@ -54,10 +54,10 @@ Changelog for modifications made by Tim Sharpe, starting with the current
 Date        Description
 =========================================================================
 05/12/2009  Added Arduino-style available() and flush() functions for both
-			supported UARTs.  Really wanted to keep them out of the library, so
-			that it would be as close as possible to Peter Fleury's original
-			library, but has scoping issues accessing internal variables from
-			another program.  Go C!
+            supported UARTs.  Really wanted to keep them out of the library, so
+            that it would be as close as possible to Peter Fleury's original
+            library, but has scoping issues accessing internal variables from
+            another program.  Go C!
 
 ************************************************************************/
 

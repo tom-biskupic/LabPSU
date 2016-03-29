@@ -20,11 +20,11 @@ class CurrentGetCommand : public Command
 {
 public:
 
-	CurrentGetCommand(LabPSU *psu);
-	
-	virtual void handleSetCommand( const char *params );
-	
-	virtual void handleGetCommand() const;
+    CurrentGetCommand(LabPSU *psu);
+    
+    virtual void handleSetCommand( const char *params );
+    
+    virtual void handleGetCommand() const;
 };
 
 #endif //__CURRENT_GET_COMMAND_H__

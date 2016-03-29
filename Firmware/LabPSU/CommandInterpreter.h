@@ -42,21 +42,21 @@ I - You can't set the current but this will return the current produced by the d
 class CommandInterpreter
 {
 public:
-	CommandInterpreter(LabPSU *psu);
-	
-	void processNextCommand();
-	
+    CommandInterpreter(LabPSU *psu);
+    
+    void processNextCommand();
+    
 private:
 
-	/*
-	Reads a line into the buffer. For some reason fgets didn't work
-	so I am doing this instead.
-	*/
-	void readLine( char *buffer, size_t bufferLen ) const;
-	
-	bool parseLine( char *line, char *command, char *param ) const;	
-	
-	CommandFactory m_commandFactory;
+    /*
+    Reads a line into the buffer. For some reason fgets didn't work
+    so I am doing this instead.
+    */
+    void readLine( char *buffer, size_t bufferLen ) const;
+    
+    bool parseLine( char *line, char *command, char *param ) const;	
+    
+    CommandFactory m_commandFactory;
 };
 
 #endif //__COMMANDINTERPRETER_H__

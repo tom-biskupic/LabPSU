@@ -12,10 +12,10 @@
 class BitTools
 {
 public:
-	static inline uint8_t boolToBit(const bool value)
-	{
-		return value==true ? 1 : 0;
-	}	
+    static inline uint8_t boolToBit(const bool value)
+    {
+        return value==true ? 1 : 0;
+    }	
 };
 
 #endif /* BITTOOLS_H_ */

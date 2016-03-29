@@ -9,8 +9,8 @@
 
 namespace
 {
-	const char *CURRENT_SET_COMMAND_NAME = "ISet";
-	const float MIN_CURRENT_RANGE = 0.0f;
+    const char *CURRENT_SET_COMMAND_NAME = "ISet";
+    const float MIN_CURRENT_RANGE = 0.0f;
 }
 
 CurrentSetCommand::CurrentSetCommand(LabPSU *psu) : Command(CURRENT_SET_COMMAND_NAME,psu)
@@ -19,19 +19,19 @@ CurrentSetCommand::CurrentSetCommand(LabPSU *psu) : Command(CURRENT_SET_COMMAND_
 
 void CurrentSetCommand::handleSetCommand( const char *params )
 {
-	float amps;
-	if ( parseFloatParam(amps,params) )
-	{
-		if ( withinRange(MIN_CURRENT_RANGE,m_psu->getMaxCurrentLimit(),amps))
-		{
-			m_psu->setCurrentLimit(amps);
-		}
-	}
+    float amps;
+    if ( parseFloatParam(amps,params) )
+    {
+        if ( withinRange(MIN_CURRENT_RANGE,m_psu->getMaxCurrentLimit(),amps))
+        {
+            m_psu->setCurrentLimit(amps);
+        }
+    }
 }
 
 void CurrentSetCommand::handleGetCommand() const
 {
-	printFloat(m_psu->getCurrentLimit());
+    printFloat(m_psu->getCurrentLimit());
 }
 
 

@@ -19,11 +19,11 @@ back the current limit presently in force
 class CurrentSetCommand : public Command
 {
 public:
-	CurrentSetCommand(LabPSU *psu);
-	
-	virtual void handleSetCommand( const char *params );
-		
-	virtual void handleGetCommand() const;
+    CurrentSetCommand(LabPSU *psu);
+    
+    virtual void handleSetCommand( const char *params );
+        
+    virtual void handleGetCommand() const;
 };
 
 #endif //__CURRENTSETCOMMAND_H__

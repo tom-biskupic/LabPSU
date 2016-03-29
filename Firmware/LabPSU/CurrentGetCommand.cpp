@@ -10,12 +10,12 @@
 
 namespace
 {
-	const char *CURRENT_GET_COMMAND_NAME = "Iout";
+    const char *CURRENT_GET_COMMAND_NAME = "Iout";
 }
 
 CurrentGetCommand::CurrentGetCommand(LabPSU *psu) : Command(CURRENT_GET_COMMAND_NAME,psu)
 {
-	
+    
 }
 
 void CurrentGetCommand::handleSetCommand( const char *params )
@@ -24,6 +24,6 @@ void CurrentGetCommand::handleSetCommand( const char *params )
 
 void CurrentGetCommand::handleGetCommand() const
 {
-	printFloat(m_psu->getOutputCurrent());
+    printFloat(m_psu->getOutputCurrent());
 }
 
