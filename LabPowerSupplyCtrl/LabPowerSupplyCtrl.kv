@@ -11,13 +11,13 @@
     Label:
         id: output_voltage
         font_size: 70
-        text: "15.000V"
+        text: "%sV" % root.output_voltage
         color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
 
     Label:
         id: output_current
         font_size: 70
-        text: "0.000A"
+        text: "%sA" % root.output_current
         color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
 
     Label:

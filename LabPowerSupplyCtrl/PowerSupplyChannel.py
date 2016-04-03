@@ -1,3 +1,6 @@
+
+import serial
+
 __author__ = 'tom'
 
 class PowerSupplyChannel():
@@ -8,14 +11,23 @@ class PowerSupplyChannel():
     CCMODE_COMMAND="CCMode"
     ENABLE_COMMAND="Enable"
 
-    usb_device_filename=None
-    tty=None
-
     def __init__(self,file_name):
-        self.usb_device_filename = file_name
-        try
-            self.tty = open(self.usb_device_filename,"r+")
+        self.usb_device_filename=file_name
+        self.serialPort=None
 
+    def connect(self):
+        try:
+            self.serialPort = serial.Serial(
+                port='/dev/cu.usbmodem1421',
+                baudrate=115200,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                bytesize=serial.EIGHTBITS )
+        except Exception :
+            self.serialPort = None;
+
+    def is_connected(self):
+        return self.serialPort is not None;
 
     def get_set_voltage(self):
         return self.call_get_command_float(self.VSET_COMMAND)
@@ -46,8 +58,9 @@ class PowerSupplyChannel():
 
     def call_set_command(self,command,value):
         command_string = command+"="+value+"\n"
-        self.tty.write(command_string)
-        self.tty.readline()
+        self.serialPort.write(command_string)
+        self.serialPort.readline()
+        self.serialPort.readline()
 
     def call_get_command_float(self,command):
         value = self.call_get_command(command)
@@ -55,13 +68,14 @@ class PowerSupplyChannel():
 
     def call_get_command_bool(self,command):
         value = self.call_get_command(command)
-        return value.casefold() == "true"
+        return value.lower() == "true"
 
     def call_get_command(self,command):
         command_string = command+"=?\n"
-        self.tty.write(command_string)
-        return_string = self.tty.readline()
+        self.serialPort.write(command_string)
+        self.serialPort.readline()
+        return_string = self.serialPort.readline()
         return_string = return_string.split("=")[1]
-        return_string.rsplit('\n')
+        return_string = return_string.rstrip()
         return return_string
 
