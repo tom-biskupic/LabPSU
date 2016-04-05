@@ -10,6 +10,8 @@ class PowerSupplyChannel():
     IOUT_COMMAND="Iout"
     CCMODE_COMMAND="CCMode"
     ENABLE_COMMAND="Enable"
+    VOLTAGE_DECIMALS=3
+    CURRENT_DECIMALS=4
 
     def __init__(self,file_name):
         self.usb_device_filename=file_name
@@ -18,34 +20,43 @@ class PowerSupplyChannel():
     def connect(self):
         try:
             self.serialPort = serial.Serial(
-                port='/dev/cu.usbmodem1421',
+                port=self.usb_device_filename,
                 baudrate=115200,
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE,
                 bytesize=serial.EIGHTBITS )
         except Exception :
+            print "Connect to %s failed" % self.usb_device_filename
             self.serialPort = None;
 
     def is_connected(self):
         return self.serialPort is not None;
 
     def get_set_voltage(self):
-        return self.call_get_command_float(self.VSET_COMMAND)
+        return round(
+            float(self.call_get_command_float(self.VSET_COMMAND)),
+            self.VOLTAGE_DECIMALS)
 
     def set_set_voltage(self,voltage):
         self.call_set_command(self.VSET_COMMAND,str(voltage))
 
     def get_set_current(self):
-        return self.call_get_command_float(self.ISET_COMMAND)
+        return round(
+            float(self.call_get_command_float(self.ISET_COMMAND)),
+            self.CURRENT_DECIMALS)
 
     def set_set_current(self,current):
         self.call_set_command(self.ISET_COMMAND,str(current))
 
     def get_output_voltage(self):
-        return self.call_get_command_float(self.VOUT_COMMAND)
+        return round(
+            float(self.call_get_command_float(self.VOUT_COMMAND)),
+            self.VOLTAGE_DECIMALS)
 
     def get_output_current(self):
-        return self.call_get_command_float(self.IOUT_COMMAND)
+        return round(
+            float(self.call_get_command_float(self.IOUT_COMMAND)),
+            self.CURRENT_DECIMALS)
 
     def in_cc_mode(self):
         return self.call_get_command_bool(self.CCMODE_COMMAND)

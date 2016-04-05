@@ -23,13 +23,13 @@ class ChannelControl(BoxLayout):
             self.channel.enable(not self.enabled);
 
     def set_voltage_callback(self,instance):
-        if self.channel.is_connected():
+        if self.channel.is_connected() and instance.get_value() is not None:
             self.channel.set_set_voltage(instance.get_value())
         self.start_updates();
         return False
 
     def set_current_callback(self,instance):
-        if self.channel.is_connected():
+        if self.channel.is_connected() and instance.get_value() is not None:
             self.channel.set_set_current(instance.get_value())
         self.start_updates();
         return False
@@ -78,16 +78,15 @@ class ControlWindow(BoxLayout):
     channel2 = ObjectProperty(None)
     channel3 = ObjectProperty(None)
 
-    def update_channels(self,dt):
-        self.channel1.update_from_channel()
-        pass
 
     def bind_channels(self):
-        self.channel1.bind_to_psu( PowerSupplyChannel("/dev/cu.usbmodem1421"))
+        # self.channel1.bind_to_psu( PowerSupplyChannel("/dev/cu.usbmodem1421"))
+        self.channel1.bind_to_psu( PowerSupplyChannel("/dev/ttyACM0"))
         self.channel1.start_updates();
 
         #self.channel1.bind_to_psu( PowerSupplyChannel("/dev/tty.usbmodem1421"))
         #self.channel1.bind_to_psu( PowerSupplyChannel("/dev/tty.usbmodem1431"))
+	pass
 
 class LabPowerSupplyCtrlApp(App):
 
@@ -95,7 +94,7 @@ class LabPowerSupplyCtrlApp(App):
         control_window = ControlWindow()
         control_window.bind_channels()
         Window.full_screen = 1
-        Window.size = (800,600)
+        #Window.size = (800,600)
         return control_window
 
 
