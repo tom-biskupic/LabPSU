@@ -10,4 +10,5 @@
   (lib (name hf115F)(type KiCad)(uri "$(KIPRJMOD)\\hf115F.pretty")(options "")(descr ""))
   (lib (name MOLEXusb_mini_b_otg)(type KiCad)(uri "$(KIPRJMOD)\\MOLEXusb_mini_b_otg.pretty")(options "")(descr ""))
   (lib (name rs4700uF63V)(type KiCad)(uri "$(KIPRJMOD)\\rs4700uF63V.pretty")(options "")(descr ""))
+  (lib (name VC1625)(type KiCad)(uri "$(KIPRJMOD)\\VC1625.pretty")(options "")(descr ""))
 )
