@@ -12,6 +12,8 @@ class PowerSupplyChannel():
     ENABLE_COMMAND="Enable"
     VOLTAGE_DECIMALS=3
     CURRENT_DECIMALS=4
+    VDAC_COMMAND="VDAC"
+    VADC_COMMAND="VADC"
 
     def __init__(self,file_name):
         self.usb_device_filename=file_name
@@ -63,6 +65,12 @@ class PowerSupplyChannel():
 
     def enable(self,enabled):
         self.call_set_command(self.ENABLE_COMMAND,str(enabled))
+
+    def set_voltage_dac(self,count):
+        self.call_set_command(self.VDAC_COMMAND,("%x" % count))
+
+    def get_voltage_adc(self):
+        return int(self.call_get_command(self.VADC_COMMAND),16)
 
     def is_enabled(self):
         return self.call_get_command_bool(self.ENABLE_COMMAND)
