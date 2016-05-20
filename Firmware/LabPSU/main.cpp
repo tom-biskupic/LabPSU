@@ -32,7 +32,14 @@ int main(void)
     psu.setOutputVoltageLimit(10.0f);
     psu.setCurrentLimit(1.0f);
     
-    printf("Tom's Lab Power Supply\r\n");
+    //int i=0;
+    
+    //while(1)
+    //{
+    //    printf("1 fish %d fish\r\n",i++);
+    //}
+    
+    //printf("Tom's Lab Power Supply\r\n");
     
     while(1)
     {

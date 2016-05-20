@@ -25,6 +25,7 @@ void CurrentSetCommand::handleSetCommand( const char *params )
         if ( withinRange(MIN_CURRENT_RANGE,m_psu->getMaxCurrentLimit(),amps))
         {
             m_psu->setCurrentLimit(amps);
+            printFloat(m_psu->getCurrentLimit());
         }
     }
 }
