@@ -47,21 +47,33 @@
         text: "Enabled" if root.enabled else "Disabled"
         on_press: root.enable_clicked()
 
+<ButtonSlice>
+    size_hint: 0.1,None
+    orientation: 'vertical'
+    pos_hint: {'top':1}
+    Image:
+        source: "power-button.png"
+    Image:
+        source: "settings.png"
+    Widget:
+
 <ControlWindow>:
     channel1: channel1
     channel2: channel2
     channel3: channel3
+    buttonSlice: buttonSlice
 
     BoxLayout:
         orientation: 'horizontal'
+        cols: 4
         ChannelControl:
             id: channel1
         ChannelControl:
             id: channel2
         ChannelControl:
             id: channel3
-
-
+        ButtonSlice:
+            id: buttonSlice
 
 <NumericalValuePopup@Modalview>:
     editBox: editBox
