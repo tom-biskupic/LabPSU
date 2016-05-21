@@ -125,7 +125,7 @@ void AD7705ADC::setClockRegister(
     writeByte(clockReg);
     clearSelectLine();
     
-    printf("Wrote 0x%x to clock register\r\n",clockReg);
+    //printf("Wrote 0x%x to clock register\r\n",clockReg);
 }
 
 bool AD7705ADC::dataReady(const Channel channel)
@@ -217,7 +217,7 @@ void AD7705ADC::setSetupRegister(
     //
     while( !dataReady(channel) );
     
-    printf("Wrote 0x%x to setup register\r\n",setupRegValue);
+    //printf("Wrote 0x%x to setup register\r\n",setupRegValue);
 }
 
 void AD7705ADC::writeToCommsRegister(

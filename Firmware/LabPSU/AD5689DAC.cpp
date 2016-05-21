@@ -31,6 +31,7 @@ AD5689DAC::AD5689DAC(int selectPin) : SPIDevice(true,selectPin)
     setClockPolarity(SPIDevice::CLOCK_POLARITY_RISING_LEADS);
     setClockPhase(SPIDevice::CLOCK_PHASE_SAMPLE_ON_TRAILING);
     setBitOrdering(SPIDevice::MSB_FIRST);
+    setClockRate(SPIDevice::RATE_DIV_128);
 }
 
 void AD5689DAC::setOutput( const uint16_t value, const Channel channel)

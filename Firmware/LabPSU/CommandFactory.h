@@ -17,6 +17,8 @@
 #include "InCurrentLimitCommand.h"
 #include "VoltageDACCommand.h"
 #include "VoltageADCCommand.h"
+#include "CurrentDACCommand.h"
+#include "CurrentADCCommand.h"
 
 class CommandFactory
 {
@@ -53,6 +55,8 @@ private:
     InCurrentLimitCommand m_inCurrentLimitCommand;
     VoltageDACCommand   m_voltageDACCommand;
     VoltageADCCommand   m_voltageADCCommand;
+    CurrentDACCommand   m_currentDACCommand;
+    CurrentADCCommand   m_currentADCCommand;
     
     Command				*m_commandArray[MAX_COMMANDS];
 };

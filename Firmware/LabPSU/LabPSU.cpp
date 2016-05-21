@@ -12,7 +12,7 @@
 #include "stdio.h"
 #include <avr/io.h>
 #include "util/delay.h"
-
+#include <math.h>
 
 namespace
 {
@@ -21,21 +21,13 @@ namespace
 
     const AD7705ADC::Channel VOLTAGE_ADC_CHANNEL = AD7705ADC::CHANNEL_0;
     const AD7705ADC::Channel CURRENT_ADC_CHANNEL = AD7705ADC::CHANNEL_1;
-    //const AD7705ADC::Channel CURRENT_ADC_CHANNEL = AD7705ADC::CHANNEL_0_1;
-    
-    //
-    //	This is the highest voltage we will go to before switching to the 
-    //	series configuration of the transformer taps. In series mode the current
-    //	limit drops also.
-    //
-    const float SERIES_TAP_LOW_VOLTAGE_THRESHOLD=14.0;
     
     //
     //	These constants define the max current limit when we are in the
     //	series and parallel configuration for the transformer taps
     //
     const float SERIES_TAP_MAX_CURRENT_LIMIT=3.0;
-    const float PARA_TAP_MAX_CURRENT_LIMIT=5.0;
+    const float PARA_TAP_MAX_CURRENT_LIMIT=4.8;
     
     //
     //  These are both on the D port
@@ -48,86 +40,161 @@ namespace
     const int ADC_SS_PIN=0;
     const int ADC_DATA_READY_PIN=4; // PORTD
     
+    //
+    //	This is the highest voltage we will go to before switching to the
+    //	series configuration of the transformer taps. In series mode the current
+    //	limit drops also.
+    //
     const float THIRTY_VOLT_MODE_THRESHOLD=15.0;
     
     Linearizer::Point VOLTS_POINTS[] =
     {
-        {0x0,		    +1.17590640E-02},
-        {0x7ff,		+9.40177747E-01},
-        {0xffe,		+1.87743827E+00},
-        {0x17fd,		+2.81477950E+00},
-        {0x1ffc,		+3.75216770E+00},
-        {0x27fb,		+4.68946553E+00},
-        {0x2ffa,		+5.62678085E+00},
-        {0x37f9,		+6.56406812E+00},
-        {0x3ff8,		+7.50145700E+00},
-        {0x47f7,		+8.43868950E+00},
-        {0x4ff6,		+9.37601271E+00},
-        {0x57f5,		+1.03132273E+01},
-        {0x5ff4,		+1.12505271E+01},
-        {0x67f3,		+1.21882230E+01},
-        {0x6ff2,		+1.31252916E+01},
-        {0x77f1,		+1.40623678E+01},
-        {0x7ff0,		+1.49995497E+01},
-        {0x87ef,		+1.59377774E+01},
-        {0x8fee,		+1.68749290E+01},
-        {0x97ed,		+1.78119898E+01},
-        {0x9fec,		+1.87490699E+01},
-        {0xa7eb,		+1.96862159E+01},
-        {0xafea,		+2.06232978E+01},
-        {0xb7e9,		+2.15603995E+01},
-        {0xbfe8,		+2.24974797E+01},
-        {0xc7e7,		+2.34345509E+01},
-        {0xcfe6,		+2.43716721E+01},
-        {0xd7e5,		+2.53088281E+01},
-        {0xdfe4,		+2.62458910E+01},
-        {0xe7e3,		+2.71830544E+01},
-        {0xefe2,		+2.81200973E+01},
-        {0xf7e1,		+2.90570186E+01},
-        {0xffe0,		+2.99936415E+01}
+       {0x0,       +9.95773822E-01},
+       {0x7ff,     +9.38519687E-01},
+       {0xffe,     +1.87576760E+00},
+       {0x17fd,    +2.81310263E+00},
+       {0x1ffc,    +3.75031374E+00},
+       {0x27fb,    +4.68753207E+00},
+       {0x2ffa,    +5.62476359E+00},
+       {0x37f9,    +6.56201560E+00},
+       {0x3ff8,    +7.49936507E+00},
+       {0x47f7,    +8.43640837E+00},
+       {0x4ff6,    +9.37364824E+00},
+       {0x57f5,    +1.03107634E+01},
+       {0x5ff4,    +1.12480540E+01},
+       {0x67f3,    +1.21854413E+01},
+       {0x6ff2,    +1.31225182E+01},
+       {0x77f1,    +1.40596194E+01},
+       {0x7ff0,    +1.49968045E+01},
+       {0x87ef,    +1.59339592E+01},
+       {0x8fee,    +1.68711708E+01},
+       {0x97ed,    +1.78083346E+01},
+       {0x9fec,    +1.87456026E+01},
+       {0xa7eb,    +1.96827735E+01},
+       {0xafea,    +2.06199274E+01},
+       {0xb7e9,    +2.15570392E+01},
+       {0xbfe8,    +2.24941692E+01},
+       {0xc7e7,    +2.34314382E+01},
+       {0xcfe6,    +2.43685758E+01},
+       {0xd7e5,    +2.53056592E+01},
+       {0xdfe4,    +2.62429038E+01},
+       {0xe7e3,    +2.71801479E+01},
+       {0xefe2,    +2.81172681E+01},
+       {0xf7e1,    +2.90543960E+01},
+       {0xffe0,    +2.99912247E+01}
     };
      
     int NUM_VOLTS_POINTS = sizeof(VOLTS_POINTS)/sizeof(VOLTS_POINTS[0]);
     
     Linearizer::Point VOLTS_ADC_POINTS[] =
     {
-       {0xf,    +6.48396023E-03},
-       {0x7f8,    +9.40396497E-01},
-       {0xfe8,    +1.87773986E+00},
-       {0x17d9,    +2.81513633E+00},
-       {0x1fc9,    +3.75261122E+00},
-       {0x27b7,    +4.68994442E+00},
-       {0x2fa9,    +5.62733188E+00},
-       {0x3797,    +6.56465975E+00},
-       {0x3f85,    +7.50215128E+00},
-       {0x4776,    +8.43942074E+00},
-       {0x4f67,    +9.37683885E+00},
-       {0x5756,    +1.03140562E+01},
-       {0x5f46,    +1.12514758E+01},
-       {0x6734,    +1.21891751E+01},
-       {0x6f22,    +1.31263503E+01},
-       {0x7713,    +1.40634575E+01},
-       {0x7eff,    +1.50007643E+01},
-       {0x86eb,    +1.59390294E+01},
-       {0x8ed8,    +1.68761927E+01},
-       {0x96c8,    +1.78133443E+01},
-       {0x9eb6,    +1.87505267E+01},
-       {0xa6a5,    +1.96876695E+01},
-       {0xae93,    +2.06249099E+01},
-       {0xb683,    +2.15621128E+01},
-       {0xbe71,    +2.24992732E+01},
-       {0xc661,    +2.34365085E+01},
-       {0xce4f,    +2.43736895E+01},
-       {0xd63e,    +2.53108240E+01},
-       {0xde2c,    +2.62481103E+01},
-       {0xe61c,    +2.71853444E+01},
-       {0xee09,    +2.81224708E+01},
-       {0xf5f8,    +2.90594625E+01},
-       {0xfde4,    +2.99961230E+01}
-   };
-
-    
+       {0x2e,    +3.22477947E-03},
+       {0x7ff,    +9.38451916E-01},
+       {0xfee,    +1.87573599E+00},
+       {0x17dc,    +2.81304941E+00},
+       {0x1fcb,    +3.75028297E+00},
+       {0x27b9,    +4.68750535E+00},
+       {0x2fa7,    +5.62477225E+00},
+       {0x3796,    +6.56199362E+00},
+       {0x3f84,    +7.49936197E+00},
+       {0x4772,    +8.43641000E+00},
+       {0x4f60,    +9.37365094E+00},
+       {0x574e,    +1.03107889E+01},
+       {0x5f3c,    +1.12480715E+01},
+       {0x672a,    +1.21854936E+01},
+       {0x6f18,    +1.31225339E+01},
+       {0x7706,    +1.40595926E+01},
+       {0x7ef4,    +1.49968153E+01},
+       {0x86e2,    +1.59339337E+01},
+       {0x8ed0,    +1.68712148E+01},
+       {0x96bf,    +1.78083948E+01},
+       {0x9ead,    +1.87456234E+01},
+       {0xa69c,    +1.96827937E+01},
+       {0xae8a,    +2.06198563E+01},
+       {0xb679,    +2.15570343E+01},
+       {0xbe67,    +2.24942104E+01},
+       {0xc655,    +2.34314013E+01},
+       {0xce43,    +2.43685778E+01},
+       {0xd631,    +2.53057058E+01},
+       {0xde1f,    +2.62429755E+01},
+       {0xe60d,    +2.71802315E+01},
+       {0xedfc,    +2.81173747E+01},
+       {0xf5ea,    +2.90544988E+01},
+       {0xfdd7,    +2.99913063E+01}
+    };
     int NUM_VOLTS_ADC_POINTS = sizeof(VOLTS_ADC_POINTS)/sizeof(VOLTS_ADC_POINTS[0]);
+    
+    Linearizer::Point AMPS_DAC_POINTS[] =
+    {
+        {0x0,       -4.38587476E-06},
+        {0x7ff,     +1.55715911E-01},
+        {0xffe,     +3.11097678E-01},
+        {0x17fd,    +4.66622468E-01},
+        {0x1ffc,    +6.22086977E-01},
+        {0x27fb,    +7.77574302E-01},
+        {0x2ffa,    +9.33018828E-01},
+        {0x37f9,    +1.08851207E+00},
+        {0x3ff8,    +1.24406660E+00},
+        {0x47f7,    +1.39932335E+00},
+        {0x4ff6,    +1.55489044E+00},
+        {0x57f5,    +1.71048744E+00},
+        {0x5ff4,    +1.86584434E+00},
+        {0x67f3,    +2.02130321E+00},
+        {0x6ff2,    +2.17674566E+00},
+        {0x77f1,    +2.33230084E+00},
+        {0x7ff0,    +2.48762629E+00},
+        {0x87ef,    +2.64301006E+00},
+        {0x8fee,    +2.79849092E+00},
+        {0x97ed,    +2.95404066E+00},
+        {0x9fec,    +3.10930152E+00},
+        {0xa7eb,    +3.26483874E+00},
+        {0xafea,    +3.42021662E+00},
+        {0xb7e9,    +3.57560562E+00},
+        {0xbfe8,    +3.73111396E+00},
+        {0xc7e7,    +3.88655942E+00},
+        {0xcfe6,    +4.04214679E+00},
+        {0xd7e5,    +4.19748544E+00},
+        {0xdfe4,    +4.35293429E+00},
+        {0xe7e3,    +4.50543425E+00},
+        {0xefe2,    +4.65568860E+00}
+    };    
+    int NUM_AMPS_DAC_POINTS = sizeof(AMPS_DAC_POINTS)/sizeof(AMPS_DAC_POINTS[0]);
+      
+    Linearizer::Point AMPS_ADC_POINTS[] =
+    {
+        {0xf,       +2.30258425E-05},
+        {0x80d,     +1.56049770E-01},
+        {0x1017,    +3.12077284E-01},
+        {0x181e,    +4.68133608E-01},
+        {0x2026,    +6.24187785E-01},
+        {0x282d,    +7.80224242E-01},
+        {0x3038,    +9.36328250E-01},
+        {0x3840,    +1.09238470E+00},
+        {0x4047,    +1.24835330E+00},
+        {0x4851,    +1.40443072E+00},
+        {0x5058,    +1.56048843E+00},
+        {0x585f,    +1.71647454E+00},
+        {0x6068,    +1.87254738E+00},
+        {0x6870,    +2.02862836E+00},
+        {0x7078,    +2.18464638E+00},
+        {0x7880,    +2.34069333E+00},
+        {0x8089,    +2.49675959E+00},
+        {0x8892,    +2.65280991E+00},
+        {0x909a,    +2.80891241E+00},
+        {0x98a2,    +2.96490286E+00},
+        {0xa0ac,    +3.12100844E+00},
+        {0xa8b4,    +3.27697014E+00},
+        {0xb0bc,    +3.43313605E+00},
+        {0xb8c4,    +3.58915892E+00},
+        {0xc0ce,    +3.74519996E+00},
+        {0xc8d5,    +3.90121124E+00},
+        {0xd0dc,    +4.05721984E+00},
+        {0xd8e6,    +4.21334172E+00},
+        {0xe0ec,    +4.36928275E+00},
+        {0xe91d,    +4.52846892E+00},
+        {0xefaa,    +4.65613044E+00}
+    };
+    int NUM_AMPS_ADC_POINTS = sizeof(AMPS_ADC_POINTS)/sizeof(AMPS_ADC_POINTS[0]);
 }
 
 LabPSU::LabPSU() :	m_setVoltage(0.0f),
@@ -136,6 +203,8 @@ LabPSU::LabPSU() :	m_setVoltage(0.0f),
                     m_inThirtyVoltMode(true),
                     m_voltsLinearizer(VOLTS_POINTS,NUM_VOLTS_POINTS),
                     m_voltsADCLinearizer(VOLTS_ADC_POINTS,NUM_VOLTS_ADC_POINTS),
+                    m_ampsDACLinearizer(AMPS_DAC_POINTS,NUM_AMPS_DAC_POINTS),
+                    m_ampsADCLinearizer(AMPS_ADC_POINTS,NUM_AMPS_ADC_POINTS),
                     m_ampsPerStep(4.9958/65535.0),
                     m_dac(DAC_SS_PIN),
                     m_adc(ADC_SS_PIN,ADC_DATA_READY_PIN)
@@ -154,10 +223,13 @@ LabPSU::LabPSU() :	m_setVoltage(0.0f),
 void LabPSU::init()
 {
     setThirtyVoltMode(false);
+    //printf("Doing a DAC Reset\r\n");
     m_dac.reset();
+
     setOutputVoltageLimit(m_setVoltage);
     setCurrentLimit(m_currentLimit);
     
+    //printf("Doing a ADC Init\r\n");   
     initADC();    
 }
 
@@ -185,10 +257,21 @@ void LabPSU::setOutputVoltageLimit(const float value)
     if ( m_setVoltage != value )
     {
         m_setVoltage = value;
+        setThirtyVoltMode(m_setVoltage > THIRTY_VOLT_MODE_THRESHOLD);
+
+        //
+        //  Adjust the current limit in case we switched from parallel to series
+        //  mode
+        //
+        float maxCurrentLimit = getMaxCurrentLimit();
+        if ( m_currentLimit > maxCurrentLimit )
+        {
+            setCurrentLimit(maxCurrentLimit);
+        }
 
         if ( m_outputEnabled )
         {
-            setVoltageDAC(value);
+            setVoltageDAC(m_setVoltage);
         }
     }
 }
@@ -198,14 +281,22 @@ void LabPSU::setVoltageDACCount(unsigned int count)
     m_outputEnabled=true;
     m_setVoltage = (30.0/(float)0xffff) * (float)count;
     setThirtyVoltMode(m_setVoltage > THIRTY_VOLT_MODE_THRESHOLD);
+    
+    //
+    //  Adjust the current limit in case we switched from parallel to series
+    //  mode
+    //
+    float maxCurrentLimit = getMaxCurrentLimit();
+    if ( m_currentLimit > maxCurrentLimit )
+    {
+        setCurrentLimit(maxCurrentLimit);
+    }
     m_dac.setOutput(count,VOLTAGE_DAC_CHANNEL);
 }
 
 void LabPSU::setVoltageDAC(const float voltage)
 {
-    setThirtyVoltMode(voltage > THIRTY_VOLT_MODE_THRESHOLD);
     uint16_t count = m_voltsLinearizer.valueToCode(voltage);
-    //printf("Setting DAC A to 0x%x\r\n",count);
 
     m_dac.setOutput(count,VOLTAGE_DAC_CHANNEL);
 }
@@ -230,23 +321,33 @@ void LabPSU::setCurrentLimit(const float value)
 {
     if ( m_currentLimit != value )
     {
-        m_currentLimit = value;
-        
+        float maxCurrentLimit = getMaxCurrentLimit();
+        if ( value > maxCurrentLimit )
+        {
+            m_currentLimit = maxCurrentLimit;    
+        }
+        else
+        {
+             m_currentLimit = value;
+        }
+       
         if ( m_outputEnabled )
         {
-            setCurrentDAC(value);
+            setCurrentDAC(m_currentLimit);
         }
     }
 }
 
+void LabPSU::setCurrentDACCount(unsigned int count)
+{
+    m_currentLimit = (5.0/(float)0xffff)*(float)count;
+    m_dac.setOutput(count,CURRENT_DAC_CHANNEL);  
+}
+
 void LabPSU::setCurrentDAC(const float value)
 {
-    //
-    //	TODO: Use a linearizer
-    //
-    uint16_t count = round(value/m_ampsPerStep);
-    //printf("Setting DAC B to 0x%x\r\n",count);
-    m_dac.setOutput(count,CURRENT_DAC_CHANNEL);\
+    uint16_t count = m_ampsDACLinearizer.valueToCode(value);
+    m_dac.setOutput(count,CURRENT_DAC_CHANNEL);
 }
 
 const float LabPSU::getCurrentLimit() const
@@ -256,7 +357,7 @@ const float LabPSU::getCurrentLimit() const
 
 const float LabPSU::getMaxCurrentLimit() const
 {
-    if ( m_setVoltage > SERIES_TAP_LOW_VOLTAGE_THRESHOLD )
+    if ( m_inThirtyVoltMode )
     {
         return SERIES_TAP_MAX_CURRENT_LIMIT;
     }	
@@ -269,13 +370,14 @@ const float LabPSU::getMaxCurrentLimit() const
 const float LabPSU::getOutputCurrent() const
 {
     uint16_t code = readADC(CURRENT_ADC_CHANNEL);
-    
-    //
-    //	Need to use a linearizer here probably. Just do this for now.
-    //
-    return 5.0 * (float)code / (float)0xffff;
+    return m_ampsADCLinearizer.codeToValue(code);
 }
-    
+
+unsigned int LabPSU::getOutputCurrentCount() const
+{
+    return readADC(CURRENT_ADC_CHANNEL);    
+}
+
 void LabPSU::enableOutput(const bool enable )
 {
     if ( enable != m_outputEnabled )

@@ -65,6 +65,13 @@ public:
     Returns the current limit.
     */
     const float getCurrentLimit() const;
+
+    /*
+    Sets the output current DAC to a specified count.
+    Only used for calibration. Also sets the output current
+    by guessing a linear mapping
+    */	
+    void setCurrentDACCount(unsigned int count);
     
     /*
     Returns the maximum output current based on the transformer
@@ -77,6 +84,11 @@ public:
     Returns the current measurement from the ADC.
     */
     const float getOutputCurrent() const;
+    
+    /*
+    Returns the count on the current ADC. Used for calibration
+    */
+    unsigned int getOutputCurrentCount() const;
     
     /*
     Enables or disables the PSU output
@@ -120,7 +132,7 @@ private:
     void setThirtyVoltMode(const bool enable);
     void initADC() const;
     uint16_t readADC( const AD7705ADC::Channel channel ) const;
-
+        
     void setVoltageDAC(const float voltage);
     void setCurrentDAC(const float current);
     
@@ -131,6 +143,8 @@ private:
 
     Linearizer    m_voltsLinearizer;
     Linearizer    m_voltsADCLinearizer;
+    Linearizer    m_ampsDACLinearizer;
+    Linearizer    m_ampsADCLinearizer;
     
     float	m_ampsPerStep;
     
