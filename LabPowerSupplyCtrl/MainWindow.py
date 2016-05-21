@@ -88,6 +88,9 @@ class ControlWindow(BoxLayout):
         #self.channel1.bind_to_psu( PowerSupplyChannel("/dev/tty.usbmodem1431"))
 	pass
 
+class ButtonSlice(BoxLayout):
+    pass
+
 class LabPowerSupplyCtrlApp(App):
 
     def build(self):
