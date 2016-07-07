@@ -1,0 +1,253 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:fss1-102z
+LIBS:PowerInput-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L CONN_01X02 P1
+U 1 1 5752D66A
+P 2200 2200
+F 0 "P1" H 2200 2350 50  0000 C CNN
+F 1 "CONN_01X02" V 2300 2200 50  0000 C CNN
+F 2 "wcon:WCON-2PIN" H 2200 2200 50  0001 C CNN
+F 3 "" H 2200 2200 50  0000 C CNN
+	1    2200 2200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_01X02 P4
+U 1 1 5752D740
+P 5700 2200
+F 0 "P4" H 5700 2350 50  0000 C CNN
+F 1 "CONN_01X02" V 5800 2200 50  0000 C CNN
+F 2 "wcon:WCON-2PIN" H 5700 2200 50  0001 C CNN
+F 3 "" H 5700 2200 50  0000 C CNN
+	1    5700 2200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_01X02 P3
+U 1 1 5752D783
+P 5000 2200
+F 0 "P3" H 5000 2350 50  0000 C CNN
+F 1 "CONN_01X02" V 5100 2200 50  0000 C CNN
+F 2 "wcon:WCON-2PIN" H 5000 2200 50  0001 C CNN
+F 3 "" H 5000 2200 50  0000 C CNN
+	1    5000 2200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_01X02 P2
+U 1 1 5752D85F
+P 4300 2200
+F 0 "P2" H 4300 2350 50  0000 C CNN
+F 1 "CONN_01X02" V 4400 2200 50  0000 C CNN
+F 2 "wcon:WCON-2PIN" H 4300 2200 50  0001 C CNN
+F 3 "" H 4300 2200 50  0000 C CNN
+	1    4300 2200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R1
+U 1 1 57530351
+P 3700 2650
+F 0 "R1" V 3780 2650 50  0000 C CNN
+F 1 "100R" V 3700 2650 50  0000 C CNN
+F 2 "Resistors_ThroughHole:Resistor_Ceramic_Horizontal_L50mm-W14mm-H13mm-p60mm" H 3630 2650 50  0001 C CNN
+F 3 "" H 3700 2650 50  0000 C CNN
+	1    3700 2650
+	0    1    1    0   
+$EndComp
+$Comp
+L FSS1-102Z K2
+U 1 1 57543405
+P 3650 3700
+F 0 "K2" H 3700 4550 60  0000 C CNN
+F 1 "FSS1-102Z" H 3750 3700 60  0000 C CNN
+F 2 "FSS1-102Z:FSS1-102Z" H 3650 3650 60  0001 C CNN
+F 3 "" H 3650 3650 60  0000 C CNN
+	1    3650 3700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3850 2650 5650 2650
+Wire Wire Line
+	4250 2650 4250 2400
+Wire Wire Line
+	4950 2650 4950 2400
+Connection ~ 4250 2650
+Wire Wire Line
+	5650 2650 5650 2400
+Connection ~ 4950 2650
+Wire Wire Line
+	4350 2400 4350 4000
+Wire Wire Line
+	2250 4000 5750 4000
+Wire Wire Line
+	2250 4000 2250 2400
+Wire Wire Line
+	5050 2400 5050 4000
+Wire Wire Line
+	5750 4000 5750 2400
+Connection ~ 4350 4000
+Connection ~ 5050 4000
+Wire Wire Line
+	4050 3050 4050 2650
+Connection ~ 4050 2650
+Wire Wire Line
+	3550 2650 3350 2650
+Wire Wire Line
+	3350 2650 3350 3050
+$Comp
+L FSS1-102Z K1
+U 1 1 575435C3
+P 2750 3700
+F 0 "K1" H 2800 4550 60  0000 C CNN
+F 1 "FSS1-102Z" H 2850 3700 60  0000 C CNN
+F 2 "FSS1-102Z:FSS1-102Z" H 2750 3650 60  0001 C CNN
+F 3 "" H 2750 3650 60  0000 C CNN
+	1    2750 3700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2150 2400 2150 3050
+Wire Wire Line
+	2150 3050 2450 3050
+Wire Wire Line
+	3350 3050 3150 3050
+Connection ~ 3350 3050
+Wire Wire Line
+	4050 3500 4100 3500
+Wire Wire Line
+	4100 3500 4100 4500
+Wire Wire Line
+	3150 3500 3150 4500
+Wire Wire Line
+	2450 3500 2450 5400
+$Comp
+L CONN_01X04 P5
+U 1 1 575ACDD8
+P 2800 5700
+F 0 "P5" H 2800 5950 50  0000 C CNN
+F 1 "CONN_01X04" V 2900 5700 50  0000 C CNN
+F 2 "PinHead1-4:PINHeader1-4" H 2800 5700 50  0001 C CNN
+F 3 "" H 2800 5700 50  0000 C CNN
+	1    2800 5700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3350 3500 3350 3900
+Wire Wire Line
+	3350 3900 2450 3900
+Connection ~ 2450 3900
+Wire Wire Line
+	2750 5300 2750 5500
+Wire Wire Line
+	2750 5300 4100 5300
+Wire Wire Line
+	3150 5300 3150 4900
+Wire Wire Line
+	4100 5300 4100 4900
+Connection ~ 3150 5300
+$Comp
+L R R2
+U 1 1 575AD034
+P 3800 5000
+F 0 "R2" V 3880 5000 50  0000 C CNN
+F 1 "1K" V 3800 5000 50  0000 C CNN
+F 2 "Resistors_ThroughHole:Resistor_Horizontal_RM10mm" V 3730 5000 50  0001 C CNN
+F 3 "" H 3800 5000 50  0000 C CNN
+	1    3800 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R3
+U 1 1 575AD08F
+P 2850 5050
+F 0 "R3" V 2930 5050 50  0000 C CNN
+F 1 "1K" V 2850 5050 50  0000 C CNN
+F 2 "Resistors_ThroughHole:Resistor_Horizontal_RM10mm" V 2780 5050 50  0001 C CNN
+F 3 "" H 2850 5050 50  0000 C CNN
+	1    2850 5050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2650 5500 2650 5400
+Wire Wire Line
+	2650 5400 2450 5400
+Wire Wire Line
+	3800 4850 3800 4700
+Wire Wire Line
+	3800 5150 3800 5400
+Wire Wire Line
+	3800 5400 2950 5400
+Wire Wire Line
+	2950 5400 2950 5500
+Wire Wire Line
+	2850 5500 2850 5200
+Wire Wire Line
+	2850 4900 2850 4700
+$Comp
+L BC547 Q1
+U 1 1 575AD7A2
+P 3050 4700
+F 0 "Q1" H 3250 4775 50  0000 L CNN
+F 1 "BC547" H 3250 4700 50  0000 L CNN
+F 2 "TO_SOT_Packages_THT:TO-92_Inline_Narrow_Oval" H 3250 4625 50  0001 L CIN
+F 3 "" H 3050 4700 50  0000 L CNN
+	1    3050 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L BC547 Q2
+U 1 1 575AD7D1
+P 4000 4700
+F 0 "Q2" H 4200 4775 50  0000 L CNN
+F 1 "BC547" H 4200 4700 50  0000 L CNN
+F 2 "TO_SOT_Packages_THT:TO-92_Inline_Narrow_Oval" H 4200 4625 50  0001 L CIN
+F 3 "" H 4000 4700 50  0000 L CNN
+	1    4000 4700
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
