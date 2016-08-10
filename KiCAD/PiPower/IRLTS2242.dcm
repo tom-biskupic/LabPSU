@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP IRLTS2242
+D Transistor P-MOSFET, collector connected to mounting plane (general)
+K pmos p-mos p-mosfet transistor
+$ENDCMP
+#
+#End Doc Library

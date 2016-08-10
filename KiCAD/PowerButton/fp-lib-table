@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name PinHead1-4)(type KiCad)(uri "$(KIPRJMOD)\\PinHead1-4.pretty")(options "")(descr ""))
+  (lib (name wcon)(type KiCad)(uri "$(KIPRJMOD)\\wcon.pretty")(options "")(descr ""))
+)
