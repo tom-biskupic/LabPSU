@@ -1490,4 +1490,8 @@ Text Label 4100 1100 2    60   ~ 0
 MISO
 Text Label 4200 1300 2    60   ~ 0
 SCK
+Text Label 5750 1550 2    60   ~ 0
+ADC-CS
+Text Label 5800 4100 2    60   ~ 0
+DAC-CS
 $EndSCHEMATC
