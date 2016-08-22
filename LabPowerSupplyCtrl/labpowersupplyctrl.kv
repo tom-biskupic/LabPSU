@@ -7,24 +7,38 @@
     #        width: 5
     #        rounded_rectangle: self.x+5,self.y+5,self.width-10,self.height-10,40
 
-    orientation: 'vertical'
-    Label:
-        id: output_voltage
-        font_size: 50
-        text: "%2.3fV" % root.output_voltage
-        color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
+    canvas.after:
+        Line:
+            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
 
-    Label:
-        id: output_current
-        font_size: 50
-        text: "%1.4fA" % root.output_current
-        color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
+    orientation: 'horizontal'
 
-    Label:
-        id: output_power
-        font_size: 50
-        text: "%2.3fW" % (root.output_current * root.output_voltage)
-        color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
+    Button:
+        id: enableButton
+        size_hint: 0.4,1.0
+        font_size: 30
+        text: "Enabled" if root.enabled else "Disabled"
+        on_press: root.enable_clicked()
+
+    GridLayout:
+        cols: 1
+        Label:
+            id: output_voltage
+            font_size: 30
+            text: "%2.3fV" % root.output_voltage
+            color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
+
+        Label:
+            id: output_current
+            font_size: 30
+            text: "%1.4fA" % root.output_current
+            color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
+
+        Label:
+            id: output_power
+            font_size: 30
+            text: "%2.3fW" % (root.output_current * root.output_voltage)
+            color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
 
     GridLayout:
         canvas.after:
@@ -41,16 +55,11 @@
             on_press: root.set_current_clicked()
         Label:
             text: "%1.4fA" % root.set_current
-    Button:
-        id: enableButton
-        font_size: 50
-        text: "Enabled" if root.enabled else "Disabled"
-        on_press: root.enable_clicked()
 
 <ButtonSlice>
-    size_hint: 0.1,None
-    orientation: 'vertical'
-    pos_hint: {'top':1}
+    size_hint: 0.1,0.2
+    orientation: 'horizontal'
+#    pos_hint: {'top':1}
     Image:
         source: "power-button.png"
     Image:
@@ -58,22 +67,22 @@
     Widget:
 
 <ControlWindow>:
+    buttonSlice: buttonSlice
     channel1: channel1
     channel2: channel2
     channel3: channel3
-    buttonSlice: buttonSlice
 
     BoxLayout:
-        orientation: 'horizontal'
+        orientation: 'vertical'
         cols: 4
+        ButtonSlice:
+            id: buttonSlice
         ChannelControl:
             id: channel1
         ChannelControl:
             id: channel2
         ChannelControl:
             id: channel3
-        ButtonSlice:
-            id: buttonSlice
 
 <NumericalValuePopup@Modalview>:
     editBox: editBox
@@ -83,6 +92,7 @@
         orientation: 'vertical'
         TextInput:
             id: editBox
+            size_hint: 1,0.2
         BoxLayout:
             orientation: 'horizontal'
             GridLayout:

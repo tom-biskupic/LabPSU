@@ -30,7 +30,7 @@ class PowerSupplyChannel():
                 stopbits=serial.STOPBITS_ONE,
                 bytesize=serial.EIGHTBITS )
         except Exception :
-            print "Connect to %s failed" % self.usb_device_filename
+            print("Connect to %s failed" % self.usb_device_filename)
             self.serialPort = None;
 
     def is_connected(self):

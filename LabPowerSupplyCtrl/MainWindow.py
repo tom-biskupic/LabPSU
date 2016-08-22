@@ -5,11 +5,12 @@ from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
-import RPi.GPIO as GPIO
 import time
 
 from NumericalValuePopup import NumericalValuePopup
 from PowerSupplyChannel import PowerSupplyChannel
+
+import PowerInputControl
 
 class ChannelControl(BoxLayout):
 
@@ -87,9 +88,8 @@ class ControlWindow(BoxLayout):
         self.channel1.bind_to_psu( PowerSupplyChannel("/dev/ttyACM0"))
         self.channel1.start_updates()
         self.channel2.bind_to_psu( PowerSupplyChannel("/dev/ttyACM1"))
-	self.channel2.start_updates()
+        self.channel2.start_updates()
         #self.channel1.bind_to_psu( PowerSupplyChannel("/dev/tty.usbmodem1431"))
-	pass
 
 class ButtonSlice(BoxLayout):
     pass
@@ -100,37 +100,13 @@ class LabPowerSupplyCtrlApp(App):
         control_window = ControlWindow()
         control_window.bind_channels()
         Window.full_screen = 1
-        #Window.size = (800,600)
+        Window.size = (800,600)
         return control_window
-
-
-def setupIOs():
-    print "Setting GPIO 23 and 24 to outputs"
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(23, GPIO.OUT)
-    GPIO.setup(24, GPIO.OUT)
-
-def turnOnSupply():
-   print "Enabling 23"
-   GPIO.output(23,True);
-   time.sleep(1)
-   print "Enabling 24"
-   GPIO.output(24,True);
-   time.sleep(1)
-   pass
-
-
-def turnOffSupply():
-   print "Enabling 23"
-   GPIO.output(23,False);
-   GPIO.output(24,False);
 
 if __name__ == '__main__':
      try:
-        setupIOs()
-        turnOnSupply()
+        PowerInputControl.turnOnSupply()
         LabPowerSupplyCtrlApp().run()
      finally:
-        turnOffSupply()
-        GPIO.cleanup()
+        PowerInputControl.turnOffSupply()
 
