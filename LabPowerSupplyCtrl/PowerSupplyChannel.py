@@ -1,5 +1,6 @@
 
 import serial
+from Temp import TempSensor
 
 __author__ = 'tom'
 
@@ -17,9 +18,10 @@ class PowerSupplyChannel():
     IDAC_COMMAND="IDAC"
     IADC_COMMAND="IADC"
 
-    def __init__(self,file_name):
+    def __init__(self,file_name,temp_sensor_id):
         self.usb_device_filename=file_name
         self.serialPort=None
+        self.temp_sensor = TempSensor(temp_sensor_id)
 
     def connect(self):
         try:
@@ -31,7 +33,10 @@ class PowerSupplyChannel():
                 bytesize=serial.EIGHTBITS )
         except Exception :
             print("Connect to %s failed" % self.usb_device_filename)
-            self.serialPort = None;
+            self.serialPort = None
+
+    def close(self):
+        self.serialPort = None
 
     def is_connected(self):
         return self.serialPort is not None;
@@ -82,6 +87,9 @@ class PowerSupplyChannel():
 
     def is_enabled(self):
         return self.call_get_command_bool(self.ENABLE_COMMAND)
+
+    def get_temperature(self):
+        return self.temp_sensor.read_temp()
 
     def call_set_command(self,command,value):
         command_string = command+"="+value+"\n"

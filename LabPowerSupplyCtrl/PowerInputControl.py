@@ -1,5 +1,6 @@
 
 import sys
+import time
 
 if "linux" in sys.platform:
     import RPi.GPIO as GPIO
@@ -22,4 +23,4 @@ def turnOffSupply():
     if "linux" in sys.platform:
         GPIO.output(23,False)
         GPIO.output(24,False)
-        GPIO.reset()
+        GPIO.cleanup()

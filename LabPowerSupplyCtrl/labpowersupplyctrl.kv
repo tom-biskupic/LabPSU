@@ -17,16 +17,20 @@
         id: enableButton
         size_hint: 0.4,1.0
         font_size: 30
-        text: "Enabled" if root.enabled else "Disabled"
+        text: "On" if root.enabled else "Off"
         on_press: root.enable_clicked()
 
     GridLayout:
-        cols: 1
+        cols: 2
         Label:
             id: output_voltage
             font_size: 30
             text: "%2.3fV" % root.output_voltage
             color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
+
+        Label:
+            font_size: 15
+            text: ""
 
         Label:
             id: output_current
@@ -35,10 +39,18 @@
             color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
 
         Label:
+            font_size: 15
+            text: ""
+
+        Label:
             id: output_power
             font_size: 30
             text: "%2.3fW" % (root.output_current * root.output_voltage)
             color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
+
+        Label:
+            font_size: 15
+            text: "%2.1f %c" % (root.temperature,u'\N{DEGREE SIGN}')
 
     GridLayout:
         canvas.after:
