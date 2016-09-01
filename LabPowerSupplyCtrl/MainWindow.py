@@ -61,29 +61,24 @@ class ChannelControl(BoxLayout):
 
     def bind_to_psu(self,channel,channel_number,fan_controller):
         self.channel = channel
+        self.channel.start()
         self.channel_number = channel_number
         self.fan_controller = fan_controller
 
     def update_from_channel(self,dt):
         if self.channel.is_connected():
-            try:
-                print("Updating channel %s" % self.channel_number)
-                set_voltage = self.channel.get_set_voltage()
-                if self.set_voltage != set_voltage:
-                    self.set_voltate = set_voltage
-                self.set_voltage = self.channel.get_set_voltage()
-                self.set_current = self.channel.get_set_current()
-                self.output_current = self.channel.get_output_current()
-                self.output_voltage = self.channel.get_output_voltage()
-                self.in_current_limit = self.channel.in_cc_mode()
-                self.enabled = self.channel.is_enabled()
-                print("Updating channel %s completed" % self.channel_number)
-            except Exception:
-                print("Exception updating channel %s" % self.channel_number)
-                self.channel.close()
-                self.enabled=False
-        else:
-            self.channel.connect()
+            print("Updating channel %s" % self.channel_number)
+            set_voltage = self.channel.get_set_voltage()
+            if self.set_voltage != set_voltage:
+                self.set_voltate = set_voltage
+            self.set_voltage = self.channel.get_set_voltage()
+            self.set_current = self.channel.get_set_current()
+            self.output_current = self.channel.get_output_current()
+            self.output_voltage = self.channel.get_output_voltage()
+            self.in_current_limit = self.channel.in_cc_mode()
+            self.enabled = self.channel.is_enabled()
+            print("Updating channel %s completed" % self.channel_number)
+
         return True
 
     def update_temperature(self,dt):
@@ -95,12 +90,12 @@ class ChannelControl(BoxLayout):
         return True
 
     def start_updates(self):
-	Clock.schedule_interval(self.update_from_channel,0.25)
+        Clock.schedule_interval(self.update_from_channel,0.25)
         Clock.schedule_interval(self.update_temperature,10)
 
     def stop_updates(self):
-	print("Waiting for unschedule channel %s" % self.channel_number)
-	Clock.unschedule(self.update_from_channel)
+        print("Waiting for unschedule channel %s" % self.channel_number)
+        Clock.unschedule(self.update_from_channel)
         Clock.unschedule(self.update_temperature)
         print("Unschedule completed channel %s" % self.channel_number)
 

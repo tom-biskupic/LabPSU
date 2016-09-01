@@ -4,7 +4,7 @@ __author__ = 'tom'
 import socket
 import time
 
-from PowerSupplyChannel import PowerSupplyChannel
+from PowerSupplyChannelAPI import PowerSupplyChannelAPI
 
 class DMM():
     def connect(self,address):
@@ -27,7 +27,7 @@ dmm = DMM()
 
 dmm.connect("192.168.1.220")
 
-psu = PowerSupplyChannel("/dev/ttyACM0");
+psu = PowerSupplyChannelAPI("/dev/ttyACM0");
 psu.connect()
 
 def voltage_dac_calibrate():

@@ -1,10 +1,15 @@
 
 import serial
+import threading
+import queue
+
 from Temp import TempSensor
+from LockedThing import LockedThing
 
 __author__ = 'tom'
 
-class PowerSupplyChannel():
+
+class PowerSupplyChannel(threading.Thread):
     VSET_COMMAND="Vset"
     ISET_COMMAND="Iset"
     VOUT_COMMAND="Vout"
@@ -17,13 +22,80 @@ class PowerSupplyChannel():
     VADC_COMMAND="VADC"
     IDAC_COMMAND="IDAC"
     IADC_COMMAND="IADC"
+    POLL_PERIOD=1.0
 
     def __init__(self,file_name,temp_sensor_id):
+        self.exit_event = threading.Event()
+        threading.Thread.__init__(self)
         self.usb_device_filename=file_name
         self.serialPort=None
         self.temp_sensor = TempSensor(temp_sensor_id)
+        self.set_voltage_val = LockedThing()
+        self.set_current_val = LockedThing()
+        self.output_voltage_val = LockedThing()
+        self.output_current_val = LockedThing()
+        self.in_cc_mode_val = LockedThing()
+        self.enabled_val = LockedThing()
+        self.temp_val = LockedThing()
+        self.command_queue = queue.Queue()
+        self.update_count = 0
 
-    def connect(self):
+    def run(self):
+        while not self.exit_event.wait(self.POLL_PERIOD):
+            #
+            # If we are not currently connected then try and connect
+            #
+            if self.serialPort is None:
+                self._connect()
+
+            # If we connected or if we already were connected then do
+            # the update
+            if self.serialPort is not None:
+                try:
+                    self._process_commands()
+                    self._updateFromChannel()
+                except Exception:
+                    # Something failed - just disconnect and re-connect
+                    # on the next round
+                    self.serialPort = None
+
+    def _process_commands(self):
+        while not self.command_queue.empty():
+            command = self.command_queue.get()
+            # If we are not connected we just swallow any outstanding commands
+            # This is so we don't end up with a back-log if the user does stuff
+            # while not connected
+            if self.is_connected():
+                self.call_set_command(command[0],command[1])
+
+    def _update_from_channel(self):
+        self.set_voltage_val.set_value(round(
+            float(self.call_get_command_float(self.VSET_COMMAND)),
+            self.VOLTAGE_DECIMALS))
+        self.set_current_val.set_value(round(
+            float(self.call_get_command_float(self.ISET_COMMAND)),
+            self.CURRENT_DECIMALS))
+        self.output_voltage_val.set_value(round(
+            float(self.call_get_command_float(self.VOUT_COMMAND)),
+            self.VOLTAGE_DECIMALS))
+        self.output_current_val.set_value(round(
+            float(self.call_get_command_float(self.IOUT_COMMAND)),
+            self.CURRENT_DECIMALS))
+        self.in_cc_mode_val.set_value(self.call_get_command_bool(self.CCMODE_COMMAND))
+        self.enabled_val.set_value(self.call_get_command_bool(self.ENABLE_COMMAND))
+
+        # Throttle temperature updates to one in 5
+        if self.update_count == 5:
+            self.temp_val.set_value(self.temp_sensor.read_temp())
+            self.update_count = 0
+        else:
+            self.update_count += 1
+
+    def stop(self):
+        self.exit_event.set()
+
+    # Don't call this - the thread will manage the connection
+    def _connect(self):
         try:
             self.serialPort = serial.Serial(
                 port=self.usb_device_filename,
@@ -35,43 +107,35 @@ class PowerSupplyChannel():
             print("Connect to %s failed" % self.usb_device_filename)
             self.serialPort = None
 
-    def close(self):
+    def _close(self):
         self.serialPort = None
 
     def is_connected(self):
         return self.serialPort is not None;
 
     def get_set_voltage(self):
-        return round(
-            float(self.call_get_command_float(self.VSET_COMMAND)),
-            self.VOLTAGE_DECIMALS)
+        return self.set_voltage_val.get_value()
 
     def set_set_voltage(self,voltage):
-        self.call_set_command(self.VSET_COMMAND,str(voltage))
+        self.command_queue.put((self.VSET_COMMAND,str(voltage)))
 
     def get_set_current(self):
-        return round(
-            float(self.call_get_command_float(self.ISET_COMMAND)),
-            self.CURRENT_DECIMALS)
+        return self.set_current_val.get_value()
 
     def set_set_current(self,current):
-        self.call_set_command(self.ISET_COMMAND,str(current))
+        self.command_queue.put((self.ISET_COMMAND,str(current)))
 
     def get_output_voltage(self):
-        return round(
-            float(self.call_get_command_float(self.VOUT_COMMAND)),
-            self.VOLTAGE_DECIMALS)
+        return self.output_voltage_val.get_value()
 
     def get_output_current(self):
-        return round(
-            float(self.call_get_command_float(self.IOUT_COMMAND)),
-            self.CURRENT_DECIMALS)
+        return self.output_current_val.get_value()
 
     def in_cc_mode(self):
-        return self.call_get_command_bool(self.CCMODE_COMMAND)
+        return self.in_cc_mode_val.get_value()
 
     def enable(self,enabled):
-        self.call_set_command(self.ENABLE_COMMAND,str(enabled))
+        self.command_queue.put((self.ENABLE_COMMAND,str(enabled)))
 
     def set_voltage_dac(self,count):
         self.call_set_command(self.VDAC_COMMAND,("%x" % count))
@@ -86,7 +150,7 @@ class PowerSupplyChannel():
         return int(self.call_get_command(self.IADC_COMMAND),16)
 
     def is_enabled(self):
-        return self.call_get_command_bool(self.ENABLE_COMMAND)
+        return self.enabled_val.get_value()
 
     def get_temperature(self):
         return self.temp_sensor.read_temp()

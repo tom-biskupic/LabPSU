@@ -7,14 +7,14 @@ import builtins
 from unittest.mock import patch
 from unittest.mock import mock_open, Mock, MagicMock
 
-from PowerSupplyChannel import PowerSupplyChannel
+from PowerSupplyChannelAPI import PowerSupplyChannelAPI
 
 
 class TestPowerSupplyChannel(unittest.TestCase):
 
     def make_fixture(self):
         with unittest.mock.patch('builtins.open') as m:
-            channel = PowerSupplyChannel("test")
+            channel = PowerSupplyChannelAPI("test")
             m.assert_called_once_with("test","r+")
             return channel
 
