@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="db954c80-f55b-48c8-b3cc-a6e4be7557e7" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PowerSupplyChannel.py" afterPath="$PROJECT_DIR$/PowerSupplyChannel.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/labpowersupplyctrl.kv" afterPath="$PROJECT_DIR$/labpowersupplyctrl.kv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -31,8 +30,8 @@
       <file leaf-file-name="labpowersupplyctrl.kv" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/labpowersupplyctrl.kv">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.24791667">
-              <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+            <state vertical-scroll-proportion="0.32708332">
+              <caret line="61" column="12" selection-start-line="61" selection-start-column="12" selection-end-line="61" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -408,7 +407,13 @@
       <option name="project" value="LOCAL" />
       <updated>1472726898111</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Minor GUI changes">
+      <created>1472817878164</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1472817878164</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -452,7 +457,8 @@
     <MESSAGE value="Moved to pySerial, work on integrating with actual PSU." />
     <MESSAGE value="Added Calibration code based on PowerSupplyChannel" />
     <MESSAGE value="Changed PowerSupplyChannel to be async (i.e. thread). Still testing. TBD" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed PowerSupplyChannel to be async (i.e. thread). Still testing. TBD" />
+    <MESSAGE value="Minor GUI changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor GUI changes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -818,8 +824,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/labpowersupplyctrl.kv">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24791667">
-          <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+        <state vertical-scroll-proportion="0.32708332">
+          <caret line="61" column="12" selection-start-line="61" selection-start-column="12" selection-end-line="61" selection-end-column="12" />
           <folding />
         </state>
       </provider>

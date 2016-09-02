@@ -13,12 +13,12 @@
 
     orientation: 'horizontal'
 
-    Button:
+    Switch:
         id: enableButton
-        size_hint: 0.4,1.0
+        size_hint: 0.2,1.0
         font_size: 30
-        text: "On" if root.enabled else "Off"
-        on_press: root.enable_clicked()
+        #text: "On" if root.enabled else "Off"
+        on_active: root.enable_clicked()
 
     GridLayout:
         cols: 3
@@ -42,7 +42,7 @@
             color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
 
         Label:
-            text: "(%1.4fA)" % root.set_current
+            text: "(%1.3fA)" % root.set_current
 
         Button:
             text: 'Set Current'
@@ -58,19 +58,25 @@
             font_size: 15
             text: "%2.1f %c" % (root.temperature,u'\N{DEGREE SIGN}')
 
+        Button:
+            text: "Settings"
+            Image:
+                source: "settings.png"
+                size: 30,30
+                y: self.parent.y + self.parent.height/2 - 15
+                x: self.parent.x + self.parent.width*0.2
 
-<ButtonSlice>
-    size_hint: 0.1,0.2
-    orientation: 'horizontal'
+#<ButtonSlice>
+#    size_hint: 0.1,0.2
+#    orientation: 'horizontal'
 #    pos_hint: {'top':1}
-    Image:
-        source: "power-button.png"
-    Image:
-        source: "settings.png"
-    Widget:
+#    Image:
+#        source: "power-button.png"
+#    Image:
+#        source: "settings.png"
+#    Widget:
 
 <ControlWindow>:
-    buttonSlice: buttonSlice
     channel1: channel1
     channel2: channel2
     channel3: channel3
@@ -78,8 +84,6 @@
     BoxLayout:
         orientation: 'vertical'
         cols: 4
-        ButtonSlice:
-            id: buttonSlice
         ChannelControl:
             id: channel1
         ChannelControl:
