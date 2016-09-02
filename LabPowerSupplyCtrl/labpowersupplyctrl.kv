@@ -21,7 +21,7 @@
         on_press: root.enable_clicked()
 
     GridLayout:
-        cols: 2
+        cols: 3
         Label:
             id: output_voltage
             font_size: 30
@@ -29,8 +29,11 @@
             color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
 
         Label:
-            font_size: 15
-            text: ""
+            text: "(%2.3fV)" % root.set_voltage
+
+        Button:
+            text: 'Set Voltage'
+            on_press: root.set_voltage_clicked()
 
         Label:
             id: output_current
@@ -39,8 +42,11 @@
             color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
 
         Label:
-            font_size: 15
-            text: ""
+            text: "(%1.4fA)" % root.set_current
+
+        Button:
+            text: 'Set Current'
+            on_press: root.set_current_clicked()
 
         Label:
             id: output_power
@@ -52,21 +58,6 @@
             font_size: 15
             text: "%2.1f %c" % (root.temperature,u'\N{DEGREE SIGN}')
 
-    GridLayout:
-        canvas.after:
-            Line:
-                rectangle: self.x+1,self.y+1,self.width-1,self.height-1
-        cols: 2
-        Button:
-            text: 'Set Voltage'
-            on_press: root.set_voltage_clicked()
-        Label:
-            text: "%2.3fV" % root.set_voltage
-        Button:
-            text: 'Set Current'
-            on_press: root.set_current_clicked()
-        Label:
-            text: "%1.4fA" % root.set_current
 
 <ButtonSlice>
     size_hint: 0.1,0.2

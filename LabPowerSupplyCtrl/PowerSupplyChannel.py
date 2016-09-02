@@ -1,8 +1,12 @@
 
 import serial
 import threading
-import Queue
 import sys
+
+if sys.version_info[0] < 3:
+    import Queue
+else:
+    import queue
 
 from Temp import TempSensor
 from LockedThing import LockedThing
@@ -38,7 +42,12 @@ class PowerSupplyChannel(threading.Thread):
         self.in_cc_mode_val = LockedThing(0.0)
         self.enabled_val = LockedThing(False)
         self.temp_val = LockedThing(0.0)
-        self.command_queue = Queue.Queue()
+
+        if sys.version_info[0] < 3:
+            self.command_queue = Queue.Queue()
+        else:
+            self.command_queue = queue.Queue()
+
         self.update_count = 0
 
     def run(self):
