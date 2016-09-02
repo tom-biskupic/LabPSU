@@ -7,6 +7,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
 import time
+import signal
 
 from NumericalValuePopup import NumericalValuePopup
 from PowerSupplyChannel import PowerSupplyChannel
@@ -61,13 +62,11 @@ class ChannelControl(BoxLayout):
 
     def bind_to_psu(self,channel,channel_number,fan_controller):
         self.channel = channel
-        self.channel.start()
         self.channel_number = channel_number
         self.fan_controller = fan_controller
 
     def update_from_channel(self,dt):
         if self.channel.is_connected():
-            print("Updating channel %s" % self.channel_number)
             set_voltage = self.channel.get_set_voltage()
             if self.set_voltage != set_voltage:
                 self.set_voltate = set_voltage
@@ -77,16 +76,13 @@ class ChannelControl(BoxLayout):
             self.output_voltage = self.channel.get_output_voltage()
             self.in_current_limit = self.channel.in_cc_mode()
             self.enabled = self.channel.is_enabled()
-            print("Updating channel %s completed" % self.channel_number)
 
         return True
 
     def update_temperature(self,dt):
         if self.channel.is_connected():
-            print("Updating channel %s temp" % self.channel_number)
             self.temperature = self.channel.get_temperature()
             self.fan_controller.set_temp(self.temperature,self.channel_number)
-            print("Updating channel %s temp completed" % self.channel_number)
         return True
 
     def start_updates(self):
@@ -94,10 +90,8 @@ class ChannelControl(BoxLayout):
         Clock.schedule_interval(self.update_temperature,10)
 
     def stop_updates(self):
-        print("Waiting for unschedule channel %s" % self.channel_number)
         Clock.unschedule(self.update_from_channel)
         Clock.unschedule(self.update_temperature)
-        print("Unschedule completed channel %s" % self.channel_number)
 
 
 class ControlWindow(BoxLayout):
@@ -107,30 +101,59 @@ class ControlWindow(BoxLayout):
 
 
     def bind_channels(self,fan_controller):
-        self.channel1.bind_to_psu( PowerSupplyChannel("/dev/ttyACM0","28-0415b237afff"),1,fan_controller)
+        self.psuChannel1 = PowerSupplyChannel("/dev/ttyACM0","28-0415b237afff")
+        self.psuChannel1.start()
+        self.psuChannel2 = PowerSupplyChannel("/dev/ttyACM1","28-0415b24bc8ff")
+        self.psuChannel2.start()
+        self.psuChannel3 = PowerSupplyChannel("/dev/ttyACM2","28-0315b24341ff")
+        self.psuChannel3.start()
+
+        self.channel1.bind_to_psu(self.psuChannel1,1,fan_controller)
         self.channel1.start_updates()
-        self.channel2.bind_to_psu( PowerSupplyChannel("/dev/ttyACM1","28-0415b24bc8ff"),2,fan_controller)
+        self.channel2.bind_to_psu(self.psuChannel2,2,fan_controller)
         self.channel2.start_updates()
-        self.channel3.bind_to_psu( PowerSupplyChannel("/dev/ttyACM2","28-0315b24341ff"),3,fan_controller)
+        self.channel3.bind_to_psu(self.psuChannel3,3,fan_controller)
         self.channel3.start_updates()
+
+    def shutdown(self):
+        self.psuChannel1.stop()
+        self.psuChannel2.stop()
+        self.psuChannel3.stop()
 
 class ButtonSlice(BoxLayout):
     pass
 
 class LabPowerSupplyCtrlApp(App):
 
+    def __init__(self):
+        App.__init__(self)
+        self.control_window = None
+
     def build(self):
-        control_window = ControlWindow()
+        self.control_window = ControlWindow()
         self.fan_controller = FanController()
-        control_window.bind_channels(self.fan_controller)
+        self.control_window.bind_channels(self.fan_controller)
         Window.full_screen = 1
 #        Window.size = (800,600)
-        return control_window
+        return self.control_window
+
+    def shutdown(self):
+       if self.control_window is not None:
+           self.control_window.shutdown()
+
 
 if __name__ == '__main__':
-     try:
-        PowerInputControl.turnOnSupply()
-        LabPowerSupplyCtrlApp().run()
-     finally:
+    app = LabPowerSupplyCtrlApp()
+
+    def closeStuff(signum,stack):
+        app.shutdown()
         PowerInputControl.turnOffSupply()
 
+    try:
+        PowerInputControl.turnOnSupply()
+        #signal.signal(signal.SIGINT,closeStuff)
+        #signal.signal(signal.SIGHUP,closeStuff)
+        app.run()
+    finally:
+        app.shutdown()
+        PowerInputControl.turnOffSupply()

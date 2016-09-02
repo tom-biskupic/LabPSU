@@ -9,7 +9,7 @@
 
     canvas.after:
         Line:
-            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
+            rectangle: self.x+1,self.y+1,self.width-2,self.height-2
 
     orientation: 'horizontal'
 
@@ -35,7 +35,7 @@
         Label:
             id: output_current
             font_size: 30
-            text: "%1.4fA" % root.output_current
+            text: "%1.3fA" % root.output_current
             color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
 
         Label:
@@ -45,7 +45,7 @@
         Label:
             id: output_power
             font_size: 30
-            text: "%2.3fW" % (root.output_current * root.output_voltage)
+            text: "%2.2fW" % (root.output_current * root.output_voltage)
             color: [1,0,0,1] if root.in_current_limit else [0.5,0.5,0.5,1] if not root.enabled else [0,1,0,1]
 
         Label:

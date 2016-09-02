@@ -1,7 +1,8 @@
 
 import serial
 import threading
-import queue
+import Queue
+import sys
 
 from Temp import TempSensor
 from LockedThing import LockedThing
@@ -30,14 +31,14 @@ class PowerSupplyChannel(threading.Thread):
         self.usb_device_filename=file_name
         self.serialPort=None
         self.temp_sensor = TempSensor(temp_sensor_id)
-        self.set_voltage_val = LockedThing()
-        self.set_current_val = LockedThing()
-        self.output_voltage_val = LockedThing()
-        self.output_current_val = LockedThing()
-        self.in_cc_mode_val = LockedThing()
-        self.enabled_val = LockedThing()
-        self.temp_val = LockedThing()
-        self.command_queue = queue.Queue()
+        self.set_voltage_val = LockedThing(0.0)
+        self.set_current_val = LockedThing(0.0)
+        self.output_voltage_val = LockedThing(0.0)
+        self.output_current_val = LockedThing(0.0)
+        self.in_cc_mode_val = LockedThing(0.0)
+        self.enabled_val = LockedThing(False)
+        self.temp_val = LockedThing(0.0)
+        self.command_queue = Queue.Queue()
         self.update_count = 0
 
     def run(self):
@@ -53,11 +54,13 @@ class PowerSupplyChannel(threading.Thread):
             if self.serialPort is not None:
                 try:
                     self._process_commands()
-                    self._updateFromChannel()
+                    self._update_from_channel()
                 except Exception:
                     # Something failed - just disconnect and re-connect
                     # on the next round
                     self.serialPort = None
+                    print("Caught error in loop - disconnecting", sys.exc_info()[0])
+        print("Channel exiting")
 
     def _process_commands(self):
         while not self.command_queue.empty():
@@ -93,6 +96,7 @@ class PowerSupplyChannel(threading.Thread):
 
     def stop(self):
         self.exit_event.set()
+        self.join()
 
     # Don't call this - the thread will manage the connection
     def _connect(self):
