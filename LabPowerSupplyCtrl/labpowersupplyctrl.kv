@@ -18,7 +18,7 @@
         size_hint: 0.2,1.0
         font_size: 30
         #text: "On" if root.enabled else "Off"
-        on_active: root.enable_clicked()
+        on_active: root.enable_clicked(*args)
 
     GridLayout:
         cols: 3

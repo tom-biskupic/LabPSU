@@ -26,9 +26,9 @@ class ChannelControl(BoxLayout):
     enabled = ObjectProperty(False)
     in_current_limit = ObjectProperty(False)
 
-    def enable_clicked(self):
+    def enable_clicked(self,instance,value):
         if self.channel.is_connected():
-            self.channel.enable(not self.enabled);
+            self.channel.enable(value);
 
     def set_voltage_callback(self,instance):
         if self.channel.is_connected() and instance.get_value() is not None:
