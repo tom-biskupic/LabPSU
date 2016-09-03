@@ -59,7 +59,8 @@
             text: "%2.1f %c" % (root.temperature,u'\N{DEGREE SIGN}')
 
         Button:
-            text: "Settings"
+            text: "Calibrate"
+            on_press: root.calibrate_clicked()
             Image:
                 source: "settings.png"
                 size: 30,30
@@ -83,7 +84,7 @@
 
     BoxLayout:
         orientation: 'vertical'
-        cols: 4
+        #cols: 4
         ChannelControl:
             id: channel1
         ChannelControl:
@@ -91,7 +92,28 @@
         ChannelControl:
             id: channel3
 
-<NumericalValuePopup@Modalview>:
+<CalibratePopup@Popup>:
+    size_hint: 0.8,0.4
+    title: "Calibrate the channel using a networked digital multimeter."
+    GridLayout:
+        cols: 2
+        Label:
+            text_size: root.width * 0.6,None
+            text: "Connect the channel output to the DMM voltage terminals and hit calibrate"
+            size_hint: 0.6,1.0
+        Button:
+            size_hint: 0.3,0.1
+            text: "Calbrate Voltage"
+        Label:
+            text_size: root.width * 0.6,None
+            text: "Connect the channel output to the DMM current terminals (on 10A range) and hit calibrate"
+            size_hint: 0.6,1.0
+        Button:
+            size_hint: 0.3,0.1
+            text: "Calbrate Current"
+
+
+<NumericalValuePopup@ModalView>:
     editBox: editBox
 
     size_hint: 0.5,0.5

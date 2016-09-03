@@ -6,12 +6,14 @@ from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
+from kivy.config import Config
 import time
 import signal
 
 from NumericalValuePopup import NumericalValuePopup
 from PowerSupplyChannel import PowerSupplyChannel
 from FanController import FanController
+from CalibratePopup import CalibratePopup
 
 import PowerInputControl
 
@@ -59,6 +61,10 @@ class ChannelControl(BoxLayout):
         view.bind(on_dismiss=self.set_current_callback)
         view.open()
         pass
+
+    def calibrate_clicked(self):
+        view = CalibratePopup()
+        view.open()
 
     def bind_to_psu(self,channel,channel_number,fan_controller):
         self.channel = channel
@@ -143,6 +149,7 @@ class LabPowerSupplyCtrlApp(App):
 
 
 if __name__ == '__main__':
+    Config.set('kivy','keyboard_mode','systemandmulti')
     app = LabPowerSupplyCtrlApp()
 
     def closeStuff(signum,stack):
