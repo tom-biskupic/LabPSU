@@ -31,7 +31,6 @@ class PowerSupplyChannel(threading.Thread):
 
     def __init__(self,file_name,temp_sensor_id):
         self.exit_event = threading.Event()
-        threading.Thread.__init__(self)
         self.usb_device_filename=file_name
         self.serialPort=None
         self.temp_sensor = TempSensor(temp_sensor_id)
@@ -49,6 +48,7 @@ class PowerSupplyChannel(threading.Thread):
             self.command_queue = queue.Queue()
 
         self.update_count = 0
+        threading.Thread.__init__(self)
 
     def run(self):
         while not self.exit_event.wait(self.POLL_PERIOD):

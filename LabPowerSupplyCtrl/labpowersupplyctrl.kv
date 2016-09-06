@@ -93,25 +93,58 @@
             id: channel3
 
 <CalibratePopup@Popup>:
+    dmm_ip: dmm_ip
     size_hint: 0.8,0.4
     title: "Calibrate the channel using a networked digital multimeter."
     GridLayout:
         cols: 2
         Label:
+            text: "DMM hostname or IP:"
+            size_hint: 0.6,0.8
+        TextInput:
+            id: dmm_ip
+            size_hint: 0.3,0.8
+            multiline: False
+        Label:
+            text: ""
+        Label:
+            text: root.dmm_error
+            color: [1,0,0,1]
+            size_hint: 0.3,0.15
+        Label:
             text_size: root.width * 0.6,None
             text: "Connect the channel output to the DMM voltage terminals and hit calibrate"
             size_hint: 0.6,1.0
         Button:
-            size_hint: 0.3,0.1
+            size_hint: 0.2,0.1
             text: "Calbrate Voltage"
+            on_press: root.calibrate_voltage()
         Label:
             text_size: root.width * 0.6,None
             text: "Connect the channel output to the DMM current terminals (on 10A range) and hit calibrate"
             size_hint: 0.6,1.0
         Button:
-            size_hint: 0.3,0.1
+            size_hint: 0.2,0.1
             text: "Calbrate Current"
+            on_press: root.calibrate_current()
 
+
+<CalibrateProgressPopup@Popup>:
+    title: "Calibrate the channel using a networked digital multimeter."
+    size_hint: 0.5,0.4
+    BoxLayout:
+        orientation: 'vertical'
+        ProgressBar:
+            max: 100
+            value: root.progress_value
+        Label:
+            text: root.current_status
+        AnchorLayout:
+            anchor_x: 'center'
+            Button:
+                text: "Cancel"
+                on_press: root.cancel()
+                size_hint: 0.2,0.5
 
 <NumericalValuePopup@ModalView>:
     editBox: editBox
