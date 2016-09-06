@@ -5,14 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="db954c80-f55b-48c8-b3cc-a6e4be7557e7" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/CalibrateProgressPopup.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Calibrator.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ChannelControl.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/DMM.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CalibratePopup.py" afterPath="$PROJECT_DIR$/CalibratePopup.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MainWindow.py" afterPath="$PROJECT_DIR$/MainWindow.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PowerSupplyChannel.py" afterPath="$PROJECT_DIR$/PowerSupplyChannel.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/labpowersupplyctrl.kv" afterPath="$PROJECT_DIR$/labpowersupplyctrl.kv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="LabPowerSupplyCtrl.iws" />
@@ -505,7 +497,13 @@
       <option name="project" value="LOCAL" />
       <updated>1472905059188</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Work on Calibrate GUI">
+      <created>1473174495986</created>
+      <option name="number" value="00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1473174495986</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="ToolWindowManager">
