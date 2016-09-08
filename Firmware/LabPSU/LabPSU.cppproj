@@ -280,6 +280,18 @@
     <Compile Include="CommandInterpreter.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="CurrentADCCommand.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CurrentADCCommand.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CurrentDACCommand.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CurrentDACCommand.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="CurrentGetCommand.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -308,6 +320,18 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="OutputEnableCommand.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="VoltageADCCommand.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="VoltageADCCommand.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="VoltageDACCommand.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="VoltageDACCommand.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="VoltageGetCommand.cpp">
