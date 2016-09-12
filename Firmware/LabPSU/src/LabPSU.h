@@ -127,42 +127,6 @@ public:
     */
     uint32_t getVoltageFullScaleCalibrationCoefficient();
     
-	/*
-	Returns the voltage ADC linearizer. 
-	Used to re-write the calibration tables
-	*/
-	Linearizer& getVoltageADCLinearizer()
-	{
-		return m_voltsADCLinearizer;
-	}
-
-	/*
-	Returns the voltage DAC linearizer. 
-	Used to re-write the calibration tables
-	*/
-	Linearizer& getVoltageDACLinearizer()
-	{
-		return m_voltsLinearizer;
-	}
-
-	/*
-	Returns the current ADC linearizer. 
-	Used to re-write the calibration tables
-	*/
-	Linearizer& getCurrentADCLinearizer()
-	{
-		return m_ampsADCLinearizer;
-	}
-
-	/*
-	Returns the current DAC linearizer. 
-	Used to re-write the calibration tables
-	*/
-	Linearizer& getCurrentDACLinearizer()
-	{
-		return m_ampsDACLinearizer;
-	}
-	
 private:
     
     void setThirtyVoltMode(const bool enable);

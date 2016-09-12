@@ -262,6 +262,12 @@
     <Compile Include="BitTools.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="CalibrationCommand.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CalibrationCommand.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Command.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -308,6 +314,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="InCurrentLimitCommand.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LineariserStorage.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LineariserStorage.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Linearizer.cpp">

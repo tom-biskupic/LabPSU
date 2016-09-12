@@ -19,7 +19,6 @@
 #include "VoltageADCCommand.h"
 #include "CurrentDACCommand.h"
 #include "CurrentADCCommand.h"
-#include "CalibrationCommand.h"
 
 class CommandFactory
 {
@@ -45,7 +44,7 @@ private:
     //
     enum 
     {
-        MAX_COMMANDS=20
+        MAX_COMMANDS=10
     };
     
     VoltageSetCommand	m_voltageSetCommand;
@@ -58,11 +57,7 @@ private:
     VoltageADCCommand   m_voltageADCCommand;
     CurrentDACCommand   m_currentDACCommand;
     CurrentADCCommand   m_currentADCCommand;
-    VoltageADCCalibrationCommand m_voltageADCCalCommand;
-	VoltageDACCalibrationCommand m_voltageDACCalCommand;
-	CurrentADCCalibrationCommand m_currentADCCalCommand;
-	CurrentDACCalibrationCommand m_currentDACCalCommand;
-	
+    
     Command				*m_commandArray[MAX_COMMANDS];
 };
 

@@ -20,11 +20,7 @@ CommandFactory::CommandFactory( LabPSU *psu )
         m_voltageDACCommand(psu),
         m_voltageADCCommand(psu),
         m_currentDACCommand(psu),
-        m_currentADCCommand(psu),
-		m_voltageADCCalCommand(psu),
-		m_voltageDACCalCommand(psu),
-		m_currentADCCalCommand(psu),
-		m_currentDACCalCommand(psu)
+        m_currentADCCommand(psu)
 {
     for(int i=0;i<MAX_COMMANDS;i++)
     {
@@ -41,10 +37,6 @@ CommandFactory::CommandFactory( LabPSU *psu )
     addCommand(&m_voltageADCCommand);
     addCommand(&m_currentDACCommand);
     addCommand(&m_currentADCCommand);
-	addCommand(&m_voltageADCCalCommand);
-	addCommand(&m_voltageDACCalCommand);
-	addCommand(&m_currentADCCalCommand);
-	addCommand(&m_currentDACCalCommand);
 }
 
 Command *CommandFactory::getCommand( const char *commandName ) const

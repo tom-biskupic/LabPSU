@@ -17,7 +17,7 @@ on the current ADC. This is primarily used for calibration
 */
 class CurrentADCCommand : public Command
 {
-public:
+    public:
     CurrentADCCommand(LabPSU *psu);
     
     virtual void handleSetCommand( const char *params );

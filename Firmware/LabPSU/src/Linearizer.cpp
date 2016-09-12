@@ -9,30 +9,10 @@
 #include "math.h"
 
 const struct Linearizer::Point Linearizer::ZERO_POINT = {0,0.0f};
-
-Linearizer::Linearizer(uint16_t numPoints,uint16_t min,uint16_t max)
-	: m_numPoints(numPoints),m_min(min),m_max(max)
+    
+Linearizer::Linearizer(const Point *points, int numPoints,uint16_t min,uint16_t max) 
+    : m_points(points), m_numPoints(numPoints),m_min(min),m_max(max)
 {
-	if ( m_numPoints > MAX_POINTS )
-	{
-		m_numPoints = MAX_POINTS;
-	}
-}
-
-void Linearizer::setPoint( int index, const Point point )
-{
-	m_points[index] = point;
-}
-
-void Linearizer::setMinMax( uint16_t min, uint16_t max)
-{
-	m_max = max;
-	m_min = min;
-}
-
-void Linearizer::setNumPoints(uint16_t numPoints)
-{
-	m_numPoints = numPoints;
 }
 
 const uint16_t Linearizer::valueToCode(const float value) const
@@ -46,7 +26,7 @@ const uint16_t Linearizer::valueToCode(const float value) const
         return interpolateCode(ZERO_POINT,m_points[1],ZERO_POINT,value);
     }
     
-    for(uint16_t i=1;i<m_numPoints;i++)
+    for(int i=1;i<m_numPoints;i++)
     {
         if ( value < m_points[i].value )
         {
@@ -87,7 +67,7 @@ const float Linearizer::codeToValue(const uint16_t code) const
         return interpolateValue(ZERO_POINT,m_points[1],ZERO_POINT,code);
     }
     
-    for(uint16_t i=1;i<m_numPoints;i++)
+    for(int i=1;i<m_numPoints;i++)
     {
         if ( code < m_points[i].code )
         {

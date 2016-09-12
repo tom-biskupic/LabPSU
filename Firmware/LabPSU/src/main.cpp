@@ -46,8 +46,3 @@ int main(void)
         commandInterpreter.processNextCommand();
     }        
 }
-
-extern "C" void __cxa_pure_virtual()
-{
-	printf("Pure Virtual called! I'm outa here!\r\n");
-}
