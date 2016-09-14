@@ -59,13 +59,19 @@ class ChannelControl(BoxLayout):
 
     def calibrate_clicked(self):
         view = CalibratePopup(self)
+        view.bind(on_dismiss=self.calibrate_complete)
         view.open()
 
     def calibrate_voltage(self,dmm_ip):
         self.stop_updates()
         self.channel.stop()
-        view = CalibrateProgressPopup(self.channel,dmm_ip,Calibrator.VOLTAGE)
+        view = CalibrateProgressPopup(self.channel,self,dmm_ip,Calibrator.VOLTAGE)
+        view.bind(on_dismiss=self.calibrate_complete)
         view.open()
+
+    def calibrate_complete(self):
+        self.channel.start()
+        self.start_updates();
 
     def bind_to_psu(self,channel,channel_number,fan_controller):
         self.channel = channel

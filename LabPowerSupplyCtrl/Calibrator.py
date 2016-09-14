@@ -8,7 +8,7 @@ __author__ = 'tom'
 class Calibrator(threading.Thread):
     VOLTAGE="Voltage"
     CURRENT="Current"
-    STEPS=32
+    STEPS=16
     WAIT_PERIOD=1.0
 
     def __init__(self,power_supply_channel,voltage_or_current,dmm_ip,callback):
@@ -21,10 +21,10 @@ class Calibrator(threading.Thread):
         if voltage_or_current == self.VOLTAGE:
             self.max = 0xffff;
         else:
-            self.max = int(4.8/5.0 * 0xffff)
+            self.max = int(4.6/5.0 * 0xffff)
 
         self.step = self.max / self.STEPS
-        self.next = 0;
+        self.step_num=0
         self.exit_event = threading.Event()
         threading.Thread.__init__(self)
         self.values = []
@@ -36,25 +36,56 @@ class Calibrator(threading.Thread):
     def run(self):
         while not self.exit_event.wait(self.WAIT_PERIOD) or not self.is_done():
             self.do_next()
+
+        #
+        # Write the cal table
+        #
+        for i in range(self.STEPS):
+            if self.voltage_or_current == self.VOLTAGE:
+                self.power_supply_channel.set_voltage_dac_cal_points(self.STEPS)
+                self.power_supply_channel.set_voltage_dac_cal(i,self.values[i][0],self.values[i][1])
+            else:
+                self.power_supply_channel.set_current_dac_cal_points(self.STEPS)
+                self.power_supply_channel.set_current_dac_cal(i,self.values[i][0],self.values[i][1])
+
+        if self.voltage_or_current == self.VOLTAGE:
+            self.power_supply_channel.save_voltage_dac_cal()
+        else:
+            self.power_supply_channel.save_current_dac_cal()
+
+        for i in range(self.STEPS):
+            if self.voltage_or_current == self.VOLTAGE:
+                self.power_supply_channel.set_voltage_adc_cal_points(self.STEPS)
+                self.power_supply_channel.set_voltage_adc_cal(i,self.values[i][2],self.values[i][1])
+            else:
+                self.power_supply_channel.set_current_adc_cal_points(self.STEPS)
+                self.power_supply_channel.set_current_adc_cal(i,self.values[i][2],self.values[i][1])
+
+        if self.voltage_or_current == self.VOLTAGE:
+            self.power_supply_channel.save_voltage_adc_cal()
+        else:
+            self.power_supply_channel.save_current_adc_cal()
+
         self.callback.complete(self.values)
 
     def is_done(self):
-        self.next < self.max
+        self.step_num < self.STEPS
 
     def do_next(self):
-        self.callback.status("0x%4X = " % self.next)
+        next_count = self.step_num * self.step
+        # self.callback.status("0x%4X = " % self.next_count)
         if self.voltage_or_current == self.VOLTAGE:
-            self.power_supply_channel.set_voltage_dac(self.next);
+            self.power_supply_channel.set_voltage_dac(next_count);
             time.sleep(2.0)
             dmm_reading = self.dmm.read_voltage()
             adc_reading = self.power_supply_channel.get_voltage_adc()
         else:
-            self.power_supply_channel.set_current_dac(self.next);
+            self.power_supply_channel.set_current_dac(next_count);
             time.sleep(2.0)
             dmm_reading = self.dmm.read_current()
             adc_reading = self.power_supply_channel.get_current_adc()
 
-        self.callback.status("0x%4X = %3.3f, ADC=0x%4X" % (self.next,dmm_reading,adc_reading))
-        self.values.append((self.next,dmm_reading,adc_reading))
-        self.next += self.step
-        self.callback.progress( int((float(self.next)/float(self.max)) * 100.0))
+        self.callback.status("0x%4X = %3.3f, ADC=0x%4X" % (next_count,dmm_reading,adc_reading))
+        self.values.append((next_count,dmm_reading,adc_reading))
+        self.callback.progress( int(float(self.step_num)/float(self.STEPS) * 100.0))
+        self.step_num += 1
