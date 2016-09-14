@@ -59,17 +59,18 @@ class ChannelControl(BoxLayout):
 
     def calibrate_clicked(self):
         view = CalibratePopup(self)
-        view.bind(on_dismiss=self.calibrate_complete)
+        view.bind(on_dismiss=self.calibrate_chosen)
         view.open()
 
-    def calibrate_voltage(self,dmm_ip):
-        self.stop_updates()
-        self.channel.stop()
-        view = CalibrateProgressPopup(self.channel,self,dmm_ip,Calibrator.VOLTAGE)
-        view.bind(on_dismiss=self.calibrate_complete)
-        view.open()
+    def calibrate_chosen(self,instance):
+        if instance.get_calibration_type() is not None:
+            self.stop_updates()
+            self.channel.stop()
+            view = CalibrateProgressPopup(self.channel,instance.get_dmm_ip(),instance.get_calibration_type())
+            view.bind(on_dismiss=self.calibrate_complete)
+            view.open()
 
-    def calibrate_complete(self):
+    def calibrate_complete(self,instance):
         self.channel.start()
         self.start_updates();
 

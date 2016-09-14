@@ -34,7 +34,9 @@ class Calibrator(threading.Thread):
         self.join()
 
     def run(self):
-        while not self.exit_event.wait(self.WAIT_PERIOD) or not self.is_done():
+        self.power_supply_channel.cal_enable(True)
+
+        while not self.exit_event.wait(self.WAIT_PERIOD) and not self.is_done():
             self.do_next()
 
         #
@@ -67,9 +69,10 @@ class Calibrator(threading.Thread):
             self.power_supply_channel.save_current_adc_cal()
 
         self.callback.complete(self.values)
+        self.power_supply_channel.cal_enable(False)
 
     def is_done(self):
-        self.step_num < self.STEPS
+        return self.step_num >= self.STEPS
 
     def do_next(self):
         next_count = self.step_num * self.step

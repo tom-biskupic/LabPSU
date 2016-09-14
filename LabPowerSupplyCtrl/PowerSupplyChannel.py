@@ -173,16 +173,21 @@ class PowerSupplyChannel(threading.Thread):
         return self.temp_sensor.read_temp()
 
     def set_voltage_dac_cal_points(self,numPoints):
-        self.call_set_command(self.VOLTS_DAC_CAL_COMMAND,("numpoints,%" % numPoints))
+        param = ("numpoints,%d" % numPoints)
+        print("Setting %s=%s",(self.VOLTS_DAC_CAL_COMMAND,param))
+        self.call_set_command(self.VOLTS_DAC_CAL_COMMAND,param)
 
     def set_voltage_dac_cal(self,index,code,measurement):
-        self.call_set_command(self.VOLTS_DAC_CAL_COMMAND,("%d,%x,%f" % (index,code,measurement)))
+        param = ("%d,%x,%f" % (index,code,measurement))
+        print("Setting %s=%s",(self.VOLTS_DAC_CAL_COMMAND,param))
+        self.call_set_command(self.VOLTS_DAC_CAL_COMMAND,param)
 
     def save_voltage_dac_cal(self):
+        print("Setting %s=%s",(self.VOLTS_DAC_CAL_COMMAND,"save"))
         self.call_set_command(self.VOLTAGE_DAC_CAL_COMMAND,"save")
 
     def set_voltage_adc_cal_points(self,numPoints):
-        self.call_set_command(self.VOLTS_ADC_CAL_COMMAND,("numpoints,%" % numPoints))
+        self.call_set_command(self.VOLTS_ADC_CAL_COMMAND,("numpoints,%d" % numPoints))
 
     def set_voltage_adc_cal(self,index,code,measurement):
         self.call_set_command(self.VOLTS_ADC_CAL_COMMAND,("%d,%x,%f" % (index,code,measurement)))
@@ -191,7 +196,7 @@ class PowerSupplyChannel(threading.Thread):
         self.call_set_command(self.VOLTAGE_ADC_CAL_COMMAND,"save")
 
     def set_current_dac_cal_points(self,numPoints):
-        self.call_set_command(self.CURRENT_DAC_CAL_COMMAND,("numpoints,%" % numPoints))
+        self.call_set_command(self.CURRENT_DAC_CAL_COMMAND,("numpoints,%d" % numPoints))
 
     def set_current_dac_cal(self,index,code,measurement):
         self.call_set_command(self.CURRENT_DAC_CAL_COMMAND,("%d,%x,%f" % (index,code,measurement)))
@@ -200,13 +205,16 @@ class PowerSupplyChannel(threading.Thread):
         self.call_set_command(self.CURRENT_DAC_CAL_COMMAND,"save")
 
     def set_current_adc_cal_points(self,numPoints):
-        self.call_set_command(self.CURRENT_ADC_CAL_COMMAND,("numpoints,%" % numPoints))
+        self.call_set_command(self.CURRENT_ADC_CAL_COMMAND,("numpoints,%d" % numPoints))
 
     def set_current_adc_cal(self,index,code,measurement):
         self.call_set_command(self.CURRENT_ADC_CAL_COMMAND,("%d,%x,%f" % (index,code,measurement)))
 
     def save_current_adc_cal(self):
         self.call_set_command(self.CURRENT_ADC_CAL_COMMAND,"save")
+
+    def cal_enable(self,enabled):
+        self.call_set_command(self.ENABLE_COMMAND,str(enabled))
 
     def call_set_command(self,command,value):
         command_string = command+"="+value+"\n"
