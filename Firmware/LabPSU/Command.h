@@ -17,7 +17,7 @@ by the command interpreter.
 class Command
 {
 public:
-    Command(const char *commaneName, LabPSU *psu);
+    Command(const char *commaneName);
     
     /*
     Returns true if the command name provided is handled
@@ -29,12 +29,12 @@ public:
     Implements a set command (i.e. one that changes the state
     and which can have a parameter).
     */
-    virtual void handleSetCommand( const char *params );
+    virtual void handleSetCommand( const char *params, LabPSU *labPSU )=0;
     
     /*
     Handles a get command.
     */	
-    virtual void handleGetCommand() const;
+    virtual void handleGetCommand(LabPSU *labPSU) const=0;
     
 protected:
 
@@ -89,7 +89,6 @@ protected:
     */
     void printHex( const uint16_t value ) const;
 
-    LabPSU		*m_psu;
     const char	*m_commandName;
 };
 

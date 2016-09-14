@@ -24,10 +24,10 @@ class OutputEnableCommand : public Command
 {
 public:
 
-    OutputEnableCommand(LabPSU *psu);
+    OutputEnableCommand();
 
-    virtual void handleSetCommand( const char *params );
-    virtual void handleGetCommand() const;
+    virtual void handleSetCommand( const char *params,LabPSU *labPSU );
+    virtual void handleGetCommand(LabPSU *labPSU) const;
 };
 
 #endif // __OUTPUT_ENABLE_COMMAND_H__

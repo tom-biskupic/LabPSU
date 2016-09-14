@@ -71,14 +71,15 @@ LabPSU::LabPSU() :	m_setVoltage(0.0f),
     //
     DDRD &= ~(1 << CONST_CURRENT_MODE_PIN);
 	
-	LineariserStorage::loadLineariser(LineariserStorage::VOLTAGE_DAC,m_voltsLinearizer);
-	LineariserStorage::loadLineariser(LineariserStorage::VOLTAGE_ADC,m_voltsADCLinearizer);
-	LineariserStorage::loadLineariser(LineariserStorage::CURRENT_DAC,m_ampsDACLinearizer);
-	LineariserStorage::loadLineariser(LineariserStorage::CURRENT_ADC,m_ampsADCLinearizer);
 }
 
 void LabPSU::init()
 {
+	LineariserStorage::loadLineariser(LineariserStorage::VOLTAGE_DAC,m_voltsLinearizer);
+	LineariserStorage::loadLineariser(LineariserStorage::VOLTAGE_ADC,m_voltsADCLinearizer);
+	LineariserStorage::loadLineariser(LineariserStorage::CURRENT_DAC,m_ampsDACLinearizer);
+	LineariserStorage::loadLineariser(LineariserStorage::CURRENT_ADC,m_ampsADCLinearizer);
+
     setThirtyVoltMode(false);
     //printf("Doing a DAC Reset\r\n");
     m_dac.reset();

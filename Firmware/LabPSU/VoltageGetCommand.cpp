@@ -13,17 +13,17 @@ namespace
     const char *VOLTAGE_GET_COMMAND_NAME = "Vout";
 }
 
-VoltageGetCommand::VoltageGetCommand(LabPSU *psu) : Command(VOLTAGE_GET_COMMAND_NAME,psu)
+VoltageGetCommand::VoltageGetCommand() : Command(VOLTAGE_GET_COMMAND_NAME)
 {
     
 }
 
-void VoltageGetCommand::handleSetCommand( const char *params )
+void VoltageGetCommand::handleSetCommand( const char *params, LabPSU *labPSU )
 {
 }
 
-void VoltageGetCommand::handleGetCommand() const
+void VoltageGetCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printFloat(m_psu->getOutputVoltage());
+    printFloat(labPSU->getOutputVoltage());
 }
 

@@ -18,11 +18,11 @@ on the output current DAC. This is primarily used for calibration
 class CurrentDACCommand : public Command
 {
     public:
-    CurrentDACCommand(LabPSU *psu);
+    CurrentDACCommand();
     
-    virtual void handleSetCommand( const char *params );
+    virtual void handleSetCommand( const char *params, LabPSU *labPSU );
     
-    virtual void handleGetCommand() const;
+    virtual void handleGetCommand(LabPSU *labPSU) const;
 };
 
 #endif //__CURRENT_DAC_COMMAND_H__

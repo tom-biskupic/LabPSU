@@ -18,11 +18,11 @@ The voltage set command is used to control the output voltage setpoint.
 class VoltageSetCommand : public Command
 {
 public:
-    VoltageSetCommand(LabPSU *psu);
+    VoltageSetCommand();
     
-    virtual void handleSetCommand( const char *params );
+    virtual void handleSetCommand( const char *params, LabPSU *labPSU );
     
-    virtual void handleGetCommand() const;
+    virtual void handleGetCommand(LabPSU *labPSU) const;
 };
 
 #endif //__VOLTAGESETCOMMAND_H__

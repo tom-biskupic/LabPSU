@@ -14,15 +14,15 @@ namespace
     const char *IN_CURRENT_LIMIT_COMMAND_NAME = "CCMode";
 }
 
-InCurrentLimitCommand::InCurrentLimitCommand(LabPSU *psu) : Command(IN_CURRENT_LIMIT_COMMAND_NAME,psu)
+InCurrentLimitCommand::InCurrentLimitCommand() : Command(IN_CURRENT_LIMIT_COMMAND_NAME)
 {
 }
 
-void InCurrentLimitCommand::handleSetCommand( const char *params )
+void InCurrentLimitCommand::handleSetCommand( const char *params,LabPSU *labPSU )
 {
 }
 
-void InCurrentLimitCommand::handleGetCommand() const
+void InCurrentLimitCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printBool(m_psu->isInCurrentLimit());
+    printBool(labPSU->isInCurrentLimit());
 }

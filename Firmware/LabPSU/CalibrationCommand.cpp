@@ -13,25 +13,45 @@
 namespace
 {
 	const char SAVE_COMMAND[] = "save";
+    const char NUM_POINTS_COMMAND[] = "numpoints";
 	const char VOLTAGE_ADC_CAL_COMMAND[] = "VADCCal";
 	const char VOLTAGE_DAC_CAL_COMMAND[] = "VDACCal";
 	const char CURRENT_ADC_CAL_COMMAND[] = "IADCCal";
 	const char CURRENT_DAC_CAL_COMMAND[] = "IDACCal";
 }
 
-CalibrationCommand::CalibrationCommand(const char *commandName,LabPSU *psu) : Command(commandName,psu)
+CalibrationCommand::CalibrationCommand(const char *commandName) : Command(commandName)
 {
 	
 }
 
-void CalibrationCommand::handleSetCommand( const char *params )
+void CalibrationCommand::handleSetCommand( const char *params,LabPSU *labPSU )
 {
 	if ( strncasecmp(params,SAVE_COMMAND,sizeof(SAVE_COMMAND))==0)
 	{
-		saveLinearizer();
-		printf("Linearizer saved\r\n");
+		saveLinearizer(labPSU);
+		//printf("Linearizer saved\r\n");
 	}
-	else
+	else if ( strncasecmp(params,NUM_POINTS_COMMAND,sizeof(NUM_POINTS_COMMAND)-1)==0 )
+    {
+        char    *commaPos = strchr(params,',');
+        int     numPoints;
+        
+        if ( commaPos == NULL || sscanf(commaPos+1,"%d",&numPoints) != 1)
+        {
+            printf("Expected numpoints,<number>\r\n");
+            return;
+        }
+        
+        if ( numPoints == 0 || numPoints > Linearizer::MAX_POINTS )
+        {
+            printf("Number of points must be > 0 and < %d\r\n",Linearizer::MAX_POINTS);
+            return;
+        }
+        
+        getLinearizer(labPSU).setNumPoints(numPoints);
+    }
+    else        
 	{
 		int				index;
 		unsigned int	code;
@@ -42,7 +62,7 @@ void CalibrationCommand::handleSetCommand( const char *params )
 			Linearizer::Point point;
 			point.code = code;
 			point.value = value;
-			getLinearizer().setPoint(index,point);
+			getLinearizer(labPSU).setPoint(index,point);
 		}
 		else
 		{
@@ -51,84 +71,84 @@ void CalibrationCommand::handleSetCommand( const char *params )
 	}
 }
 
-void CalibrationCommand::handleGetCommand() const
+void CalibrationCommand::handleGetCommand(LabPSU *labPSU) const
 {
-	Linearizer& linearizer = getLinearizer();
+	Linearizer& linearizer = getLinearizer(labPSU);
 	for(uint16_t i=0;i<linearizer.getNumPoints();i++)
 	{
 		const Linearizer::Point& nextPoint = linearizer.getPoint(i);
-		printf("0x%04X = 0x%5f\r\n",nextPoint.code,(double)nextPoint.value);
+		printf("0x%04X = 0x%f\r\n",nextPoint.code,(double)nextPoint.value);
 	}
 }
 
-VoltageADCCalibrationCommand::VoltageADCCalibrationCommand(LabPSU *psu) 
-	: CalibrationCommand(VOLTAGE_ADC_CAL_COMMAND,psu)
+VoltageADCCalibrationCommand::VoltageADCCalibrationCommand() 
+	: CalibrationCommand(VOLTAGE_ADC_CAL_COMMAND)
 {
 	
 }
 
-Linearizer& VoltageADCCalibrationCommand::getLinearizer() const
+Linearizer& VoltageADCCalibrationCommand::getLinearizer(LabPSU *labPSU) const
 {
-	return m_psu->getVoltageADCLinearizer();
+	return labPSU->getVoltageADCLinearizer();
 }
 
-void VoltageADCCalibrationCommand::saveLinearizer() const
+void VoltageADCCalibrationCommand::saveLinearizer(LabPSU *labPSU) const
 {
 	LineariserStorage::saveLinearizer(
 		LineariserStorage::VOLTAGE_ADC,
-		m_psu->getVoltageADCLinearizer());
+		labPSU->getVoltageADCLinearizer());
 }
 
-VoltageDACCalibrationCommand::VoltageDACCalibrationCommand(LabPSU *psu)
-	: CalibrationCommand(VOLTAGE_DAC_CAL_COMMAND,psu)
+VoltageDACCalibrationCommand::VoltageDACCalibrationCommand()
+	: CalibrationCommand(VOLTAGE_DAC_CAL_COMMAND)
 {
 		
 }
 	
-Linearizer& VoltageDACCalibrationCommand::getLinearizer() const
+Linearizer& VoltageDACCalibrationCommand::getLinearizer(LabPSU *labPSU) const
 {
-	return m_psu->getVoltageDACLinearizer();
+	return labPSU->getVoltageDACLinearizer();
 }
 	
-void VoltageDACCalibrationCommand::saveLinearizer() const
+void VoltageDACCalibrationCommand::saveLinearizer(LabPSU *labPSU) const
 {
 	LineariserStorage::saveLinearizer(
 		LineariserStorage::VOLTAGE_DAC,
-		m_psu->getVoltageDACLinearizer());
+		labPSU->getVoltageDACLinearizer());
 }
 
-CurrentADCCalibrationCommand::CurrentADCCalibrationCommand(LabPSU *psu)
-	: CalibrationCommand(CURRENT_ADC_CAL_COMMAND,psu)
+CurrentADCCalibrationCommand::CurrentADCCalibrationCommand()
+	: CalibrationCommand(CURRENT_ADC_CAL_COMMAND)
 {
 		
 }
 
-Linearizer& CurrentADCCalibrationCommand::getLinearizer() const
+Linearizer& CurrentADCCalibrationCommand::getLinearizer(LabPSU *labPSU) const
 {
-	return m_psu->getCurrentADCLinearizer();	
+	return labPSU->getCurrentADCLinearizer();	
 }
 	
-void CurrentADCCalibrationCommand::saveLinearizer() const
+void CurrentADCCalibrationCommand::saveLinearizer(LabPSU *labPSU) const
 {
 	LineariserStorage::saveLinearizer(
 		LineariserStorage::CURRENT_ADC,
-		m_psu->getCurrentADCLinearizer());
+		labPSU->getCurrentADCLinearizer());
 }
 
-CurrentDACCalibrationCommand::CurrentDACCalibrationCommand(LabPSU *psu)
-	: CalibrationCommand(CURRENT_DAC_CAL_COMMAND,psu)
+CurrentDACCalibrationCommand::CurrentDACCalibrationCommand()
+	: CalibrationCommand(CURRENT_DAC_CAL_COMMAND)
 {
 		
 }
 	
-Linearizer& CurrentDACCalibrationCommand::getLinearizer() const
+Linearizer& CurrentDACCalibrationCommand::getLinearizer(LabPSU *labPSU) const
 {
-	return m_psu->getCurrentDACLinearizer();
+	return labPSU->getCurrentDACLinearizer();
 }
 	
-void CurrentDACCalibrationCommand::saveLinearizer() const
+void CurrentDACCalibrationCommand::saveLinearizer(LabPSU *labPSU) const
 {
 	LineariserStorage::saveLinearizer(
 		LineariserStorage::CURRENT_DAC,
-		m_psu->getCurrentDACLinearizer());
+		labPSU->getCurrentDACLinearizer());
 }

@@ -12,18 +12,18 @@ namespace
     const char *CURRENT_ADC_COMMAND_NAME = "IADC";
 }
 
-CurrentADCCommand::CurrentADCCommand(LabPSU *psu) : Command(CURRENT_ADC_COMMAND_NAME,psu)
+CurrentADCCommand::CurrentADCCommand() : Command(CURRENT_ADC_COMMAND_NAME)
 {
     
 }
 
-void CurrentADCCommand::handleSetCommand( const char *params )
+void CurrentADCCommand::handleSetCommand( const char *params,LabPSU *labPSU )
 {
 
 }
 
-void CurrentADCCommand::handleGetCommand() const
+void CurrentADCCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printHex(m_psu->getOutputCurrentCount());
+    printHex(labPSU->getOutputCurrentCount());
 }
 

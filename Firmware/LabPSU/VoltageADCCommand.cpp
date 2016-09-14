@@ -12,17 +12,17 @@ namespace
     const char *VOLTAGE_ADC_COMMAND_NAME = "VADC";
 }
 
-VoltageADCCommand::VoltageADCCommand(LabPSU *psu) : Command(VOLTAGE_ADC_COMMAND_NAME,psu)
+VoltageADCCommand::VoltageADCCommand() : Command(VOLTAGE_ADC_COMMAND_NAME)
 {
     
 }
 
-void VoltageADCCommand::handleSetCommand( const char *params )
+void VoltageADCCommand::handleSetCommand( const char *params,LabPSU *labPSU )
 {
 }
 
-void VoltageADCCommand::handleGetCommand() const
+void VoltageADCCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printHex(m_psu->getOutputVoltageCount());
+    printHex(labPSU->getOutputVoltageCount());
 }
 

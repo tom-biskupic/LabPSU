@@ -18,11 +18,11 @@ on the current ADC. This is primarily used for calibration
 class CurrentADCCommand : public Command
 {
 public:
-    CurrentADCCommand(LabPSU *psu);
+    CurrentADCCommand();
     
-    virtual void handleSetCommand( const char *params );
+    virtual void handleSetCommand( const char *params, LabPSU *labPSU );
     
-    virtual void handleGetCommand() const;
+    virtual void handleGetCommand(LabPSU *labPSU) const;
 };
 
 #endif //__CURRENT_ADC_COMMAND_H__

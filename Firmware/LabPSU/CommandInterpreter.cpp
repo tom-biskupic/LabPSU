@@ -23,7 +23,7 @@ namespace
     const char *UNKNOWN_COMMAND_ERROR = "Invalid command\r\n";
 }
 
-CommandInterpreter::CommandInterpreter(LabPSU *psu) : m_commandFactory(psu)
+CommandInterpreter::CommandInterpreter(LabPSU *psu) : m_commandFactory(), m_psu(psu)
 {
     
 }
@@ -56,11 +56,11 @@ void CommandInterpreter::processNextCommand()
             
             if ( param[0] == '?' )
             {
-                commandHandler->handleGetCommand();
+                commandHandler->handleGetCommand(m_psu);
             }
             else
             {
-                commandHandler->handleSetCommand(param);
+                commandHandler->handleSetCommand(param,m_psu);
             }
         }
     }

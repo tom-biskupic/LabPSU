@@ -16,7 +16,7 @@ namespace
     const char *FALSE_NAME = "false";
 }
 
-Command::Command(const char *commandName, LabPSU *psu) : m_psu(psu), m_commandName(commandName)
+Command::Command(const char *commandName) : m_commandName(commandName)
 {
     
 }
@@ -25,20 +25,7 @@ bool Command::handlesThis( const char *command ) const
 {
     return strcasecmp(m_commandName,command) == 0;
 }
-
-void Command::handleSetCommand( const char *params )
-{
-    //
-    //  Because AVR GCC doesn't handle pure-virtual functions for some reason...
-    //
-}    
-    
-void Command::handleGetCommand() const
-{
-    //
-    //  Because AVR GCC doesn't handle pure-virtual functions for some reason...
-    //
-}
+ 
 
 bool Command::parseFloatParam( float& value, const char *valueAsString) const
 {

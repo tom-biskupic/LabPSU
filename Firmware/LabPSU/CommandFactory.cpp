@@ -10,21 +10,21 @@
 #include "string.h"
 #include "stdio.h"
 
-CommandFactory::CommandFactory( LabPSU *psu ) 
-    :	m_voltageSetCommand(psu), 
-        m_currentSetCommand(psu), 
-        m_voltageGetCommand(psu),
-        m_currentGetCommand(psu),
-        m_outputEnableCommand(psu),
-        m_inCurrentLimitCommand(psu),
-        m_voltageDACCommand(psu),
-        m_voltageADCCommand(psu),
-        m_currentDACCommand(psu),
-        m_currentADCCommand(psu),
-		m_voltageADCCalCommand(psu),
-		m_voltageDACCalCommand(psu),
-		m_currentADCCalCommand(psu),
-		m_currentDACCalCommand(psu)
+CommandFactory::CommandFactory() 
+    :	m_voltageSetCommand(), 
+        m_currentSetCommand(), 
+        m_voltageGetCommand(),
+        m_currentGetCommand(),
+        m_outputEnableCommand(),
+        m_inCurrentLimitCommand(),
+        m_voltageDACCommand(),
+        m_voltageADCCommand(),
+        m_currentDACCommand(),
+        m_currentADCCommand(),
+		m_voltageADCCalCommand(),
+		m_voltageDACCalCommand(),
+		m_currentADCCalCommand(),
+		m_currentDACCalCommand()
 {
     for(int i=0;i<MAX_COMMANDS;i++)
     {

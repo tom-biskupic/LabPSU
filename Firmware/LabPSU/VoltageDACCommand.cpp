@@ -14,26 +14,26 @@ namespace
     const unsigned int MAX_RANGE = 0xffff;
 }
 
-VoltageDACCommand::VoltageDACCommand(LabPSU *psu) : Command(VOLTAGE_DAC_COMMAND_NAME,psu)
+VoltageDACCommand::VoltageDACCommand() : Command(VOLTAGE_DAC_COMMAND_NAME)
 {
     
 }
 
-void VoltageDACCommand::handleSetCommand( const char *params )
+void VoltageDACCommand::handleSetCommand( const char *params, LabPSU *labPSU )
 {
     unsigned int count;
     if ( parseHexParam(count,params) )
     {
         if ( withinRange(MIN_RANGE,MAX_RANGE,count))
         {
-            m_psu->setVoltageDACCount(count);
-            printFloat(m_psu->getOutputVoltageLimit());
+            labPSU->setVoltageDACCount(count);
+            printFloat(labPSU->getOutputVoltageLimit());
         }
     }
 }
 
-void VoltageDACCommand::handleGetCommand() const
+void VoltageDACCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printFloat(m_psu->getOutputVoltageLimit());
+    printFloat(labPSU->getOutputVoltageLimit());
 }
 

@@ -31,7 +31,7 @@ public:
         float		value;		
     };
     
-	static const int MAX_POINTS = 32;
+	static const int MAX_POINTS = 16;
 	
     static const struct Point ZERO_POINT;
     
@@ -40,7 +40,16 @@ public:
 	/*
 	Sets the point at the index given. Used to reload the 
 	*/
-	void setPoint( int index, const Point point );
+	void setPoint( uint16_t index, const Point& point )
+    {
+        if ( index >= m_numPoints )
+        {
+            return;
+        }
+        
+        m_points[index].code = point.code;
+        m_points[index].value = point.value;
+    }        
 	
 	/*
 	Returns the point at the index provided

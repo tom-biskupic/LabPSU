@@ -14,26 +14,26 @@ namespace
     const unsigned int MAX_RANGE = 0xffff;
 }
 
-CurrentDACCommand::CurrentDACCommand(LabPSU *psu) : Command(CURRENT_DAC_COMMAND_NAME,psu)
+CurrentDACCommand::CurrentDACCommand() : Command(CURRENT_DAC_COMMAND_NAME)
 {
     
 }
 
-void CurrentDACCommand::handleSetCommand( const char *params )
+void CurrentDACCommand::handleSetCommand( const char *params, LabPSU *labPSU )
 {
     unsigned int count;
     if ( parseHexParam(count,params) )
     {
         if ( withinRange(MIN_RANGE,MAX_RANGE,count))
         {
-            m_psu->setCurrentDACCount(count);
-            printFloat(m_psu->getCurrentLimit());
+            labPSU->setCurrentDACCount(count);
+            printFloat(labPSU->getCurrentLimit());
         }
     }
 }
 
-void CurrentDACCommand::handleGetCommand() const
+void CurrentDACCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printFloat(m_psu->getCurrentLimit());
+    printFloat(labPSU->getCurrentLimit());
 }
 

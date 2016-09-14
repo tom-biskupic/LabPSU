@@ -18,11 +18,11 @@ The voltage get command is used to read back the output volage via an ADC.
 class VoltageGetCommand : public Command
 {
     public:
-    VoltageGetCommand(LabPSU *psu);
+    VoltageGetCommand();
     
-    virtual void handleSetCommand( const char *params );
+    virtual void handleSetCommand( const char *params,LabPSU *labPSU );
     
-    virtual void handleGetCommand() const;
+    virtual void handleGetCommand(LabPSU *labPSU) const;
 };
 
 #endif //__VOLTAGE_GET_COMMAND_H__

@@ -18,10 +18,10 @@ A read-only command used to determine if we are in current limit
 class InCurrentLimitCommand : public Command
 {
 public:
-    InCurrentLimitCommand(LabPSU *psu);
+    InCurrentLimitCommand();
 
-    virtual void handleSetCommand( const char *params );
-    virtual void handleGetCommand() const;
+    virtual void handleSetCommand( const char *params, LabPSU *labPSU );
+    virtual void handleGetCommand(LabPSU *labPSU) const;
 };
 
 #endif // __IN_CURRENT_LIMIT_COMMAND_H__

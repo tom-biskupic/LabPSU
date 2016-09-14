@@ -13,17 +13,17 @@ namespace
     const char *CURRENT_GET_COMMAND_NAME = "Iout";
 }
 
-CurrentGetCommand::CurrentGetCommand(LabPSU *psu) : Command(CURRENT_GET_COMMAND_NAME,psu)
+CurrentGetCommand::CurrentGetCommand() : Command(CURRENT_GET_COMMAND_NAME)
 {
     
 }
 
-void CurrentGetCommand::handleSetCommand( const char *params )
+void CurrentGetCommand::handleSetCommand( const char *params, LabPSU *labPSU )
 {
 }
 
-void CurrentGetCommand::handleGetCommand() const
+void CurrentGetCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printFloat(m_psu->getOutputCurrent());
+    printFloat(labPSU->getOutputCurrent());
 }
 

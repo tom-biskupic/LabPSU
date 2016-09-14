@@ -20,15 +20,30 @@
 #include "string.h"
 #include "util/delay.h"
 
+int freeRam () 
+{
+    extern int __heap_start, *__brkval;
+    int v;
+    return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+}
+
 int main(void)
 {
     SerialSetup serialSetup;
+    //printf("Tom's Lab Power Supply\r\n");
+    //printf("Free ram is %d\r\n",freeRam());
+    
     LabPSU      psu;
+    //printf("Free ram is %d\r\n",freeRam());
+
     CommandInterpreter  commandInterpreter(&psu);
+    //printf("Free ram is %d\r\n",freeRam());
     
     _delay_ms(500.0);
+    //printf("Calling Init\r\n");
+
     psu.init();
-    
+    //printf("Init Complete\r\n");
     psu.setOutputVoltageLimit(10.0f);
     psu.setCurrentLimit(1.0f);
     
@@ -39,7 +54,6 @@ int main(void)
     //    printf("1 fish %d fish\r\n",i++);
     //}
     
-    //printf("Tom's Lab Power Supply\r\n");
     
     while(1)
     {

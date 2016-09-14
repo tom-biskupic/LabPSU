@@ -18,11 +18,11 @@ on the output voltage DAC. This is primarily used for calibration
 class VoltageDACCommand : public Command
 {
 public:
-    VoltageDACCommand(LabPSU *psu);
+    VoltageDACCommand();
     
-    virtual void handleSetCommand( const char *params );
+    virtual void handleSetCommand( const char *params, LabPSU *labPSU );
     
-    virtual void handleGetCommand() const;
+    virtual void handleGetCommand(LabPSU *labPSU) const;
 };
 
 #endif //__VOLTAGE_DAC_COMMAND_H__

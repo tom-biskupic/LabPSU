@@ -14,20 +14,20 @@ namespace
     const char *OUTPUT_ENABLE_COMMAND_NAME = "Enable";
 }
 
-OutputEnableCommand::OutputEnableCommand(LabPSU *psu) : Command(OUTPUT_ENABLE_COMMAND_NAME,psu)
+OutputEnableCommand::OutputEnableCommand() : Command(OUTPUT_ENABLE_COMMAND_NAME)
 {
 }
 
-void OutputEnableCommand::handleSetCommand( const char *params )
+void OutputEnableCommand::handleSetCommand( const char *params,LabPSU *labPSU )
 {
     bool enable = false;
     parseBool(enable,params);
     
-    m_psu->enableOutput(enable);
+    labPSU->enableOutput(enable);
     printBool(enable);
 }
 
-void OutputEnableCommand::handleGetCommand() const
+void OutputEnableCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printBool(m_psu->isOutputEnabled());
+    printBool(labPSU->isOutputEnabled());
 }

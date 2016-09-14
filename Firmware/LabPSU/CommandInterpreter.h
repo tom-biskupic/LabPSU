@@ -56,7 +56,8 @@ private:
     
     bool parseLine( char *line, char *command, char *param ) const;	
     
-    CommandFactory m_commandFactory;
+    CommandFactory  m_commandFactory;
+    LabPSU          *m_psu;
 };
 
 #endif //__COMMANDINTERPRETER_H__

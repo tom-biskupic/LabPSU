@@ -14,26 +14,26 @@ namespace
     const float MAX_VOLTAGE_RANGE = 30.0f;
 }
 
-VoltageSetCommand::VoltageSetCommand(LabPSU *psu) : Command(VOLTAGE_SET_COMMAND_NAME,psu)
+VoltageSetCommand::VoltageSetCommand() : Command(VOLTAGE_SET_COMMAND_NAME)
 {
     
 }
 
-void VoltageSetCommand::handleSetCommand( const char *params )
+void VoltageSetCommand::handleSetCommand( const char *params, LabPSU *labPSU )
 {
     float volts;
     if ( parseFloatParam(volts,params) )
     {
         if ( withinRange(MIN_VOLTAGE_RANGE,MAX_VOLTAGE_RANGE,volts))
         {
-            m_psu->setOutputVoltageLimit(volts);
-            printFloat(m_psu->getOutputVoltageLimit());	
+            labPSU->setOutputVoltageLimit(volts);
+            printFloat(labPSU->getOutputVoltageLimit());	
         }
     }
 }
 
-void VoltageSetCommand::handleGetCommand() const
+void VoltageSetCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printFloat(m_psu->getOutputVoltageLimit());
+    printFloat(labPSU->getOutputVoltageLimit());
 }
 

@@ -19,11 +19,6 @@ Linearizer::Linearizer(uint16_t numPoints,uint16_t min,uint16_t max)
 	}
 }
 
-void Linearizer::setPoint( int index, const Point point )
-{
-	m_points[index] = point;
-}
-
 void Linearizer::setMinMax( uint16_t min, uint16_t max)
 {
 	m_max = max;
@@ -32,7 +27,14 @@ void Linearizer::setMinMax( uint16_t min, uint16_t max)
 
 void Linearizer::setNumPoints(uint16_t numPoints)
 {
-	m_numPoints = numPoints;
+    if ( numPoints > MAX_POINTS )
+    {
+        m_numPoints = MAX_POINTS;
+    }
+    else
+    {        
+	    m_numPoints = numPoints;
+    }        
 }
 
 const uint16_t Linearizer::valueToCode(const float value) const

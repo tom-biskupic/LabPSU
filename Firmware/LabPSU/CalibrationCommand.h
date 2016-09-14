@@ -17,71 +17,71 @@ voltage/current DAC/ADCs.
 class CalibrationCommand : public Command
 {
 public:
-    CalibrationCommand(const char *commandName,LabPSU *psu);
+    CalibrationCommand(const char *commandName);
     
-    virtual void handleSetCommand( const char *params );
+    virtual void handleSetCommand( const char *params,LabPSU *labPSU );
     
-    virtual void handleGetCommand() const;
+    virtual void handleGetCommand(LabPSU *labPSU) const;
 	
 protected:
 
 	//
 	//	Must be overridden by the specific Voltage/Current/ADC/DAC command
 	//
-	virtual Linearizer& getLinearizer() const=0;
+	virtual Linearizer& getLinearizer(LabPSU *labPSU) const=0;
 	
 	//
 	//	Must be overridden by the specific voltage/current/ADC/DAC command
 	//
-	virtual void saveLinearizer() const=0;
+	virtual void saveLinearizer(LabPSU *labPSU) const=0;
 };
 
 class VoltageADCCalibrationCommand : public CalibrationCommand
 {
 public:
-	VoltageADCCalibrationCommand(LabPSU *psu);
+	VoltageADCCalibrationCommand();
 	
 protected:
 
-	virtual Linearizer& getLinearizer() const;
+	virtual Linearizer& getLinearizer(LabPSU *labPSU) const;
 	
-	virtual void saveLinearizer() const;
+	virtual void saveLinearizer(LabPSU *labPSU) const;
 };
 
 class VoltageDACCalibrationCommand : public CalibrationCommand
 {
 public:
-	VoltageDACCalibrationCommand(LabPSU *psu);
+	VoltageDACCalibrationCommand();
 	
 protected:
 
-	virtual Linearizer& getLinearizer() const;
+	virtual Linearizer& getLinearizer(LabPSU *labPSU) const;
 	
-	virtual void saveLinearizer() const;
+	virtual void saveLinearizer(LabPSU *labPSU) const;
 };
 
 class CurrentADCCalibrationCommand : public CalibrationCommand
 {
 public:
-	CurrentADCCalibrationCommand(LabPSU *psu);
+	CurrentADCCalibrationCommand();
 	
 protected:
 
-	virtual Linearizer& getLinearizer() const;
+	virtual Linearizer& getLinearizer(LabPSU *labPSU) const;
 	
-	virtual void saveLinearizer() const;
+	virtual void saveLinearizer(LabPSU *labPSU) const;
 };
 
 class CurrentDACCalibrationCommand : public CalibrationCommand
 {
 public:
-	CurrentDACCalibrationCommand(LabPSU *psu);
+	CurrentDACCalibrationCommand();
 	
 protected:
 
-	virtual Linearizer& getLinearizer() const;
+	virtual Linearizer& getLinearizer(LabPSU *labPSU) const;
 	
-	virtual void saveLinearizer() const;
+	virtual void saveLinearizer(LabPSU *labPSU) const;
 };
 
 #endif //__CALIBRATIONCOMMAND_H__

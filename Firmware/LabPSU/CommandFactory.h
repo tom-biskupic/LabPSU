@@ -24,7 +24,7 @@
 class CommandFactory
 {
 public:
-    CommandFactory( LabPSU *psu );
+    CommandFactory();
 
     /*
     Returns the Command handler that will process the command
@@ -45,7 +45,7 @@ private:
     //
     enum 
     {
-        MAX_COMMANDS=20
+        MAX_COMMANDS=16
     };
     
     VoltageSetCommand	m_voltageSetCommand;

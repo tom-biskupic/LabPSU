@@ -13,26 +13,26 @@ namespace
     const float MIN_CURRENT_RANGE = 0.0f;
 }
 
-CurrentSetCommand::CurrentSetCommand(LabPSU *psu) : Command(CURRENT_SET_COMMAND_NAME,psu)
+CurrentSetCommand::CurrentSetCommand() : Command(CURRENT_SET_COMMAND_NAME)
 {
 }
 
-void CurrentSetCommand::handleSetCommand( const char *params )
+void CurrentSetCommand::handleSetCommand( const char *params,LabPSU *labPSU )
 {
     float amps;
     if ( parseFloatParam(amps,params) )
     {
-        if ( withinRange(MIN_CURRENT_RANGE,m_psu->getMaxCurrentLimit(),amps))
+        if ( withinRange(MIN_CURRENT_RANGE,labPSU->getMaxCurrentLimit(),amps))
         {
-            m_psu->setCurrentLimit(amps);
-            printFloat(m_psu->getCurrentLimit());
+            labPSU->setCurrentLimit(amps);
+            printFloat(labPSU->getCurrentLimit());
         }
     }
 }
 
-void CurrentSetCommand::handleGetCommand() const
+void CurrentSetCommand::handleGetCommand(LabPSU *labPSU) const
 {
-    printFloat(m_psu->getCurrentLimit());
+    printFloat(labPSU->getCurrentLimit());
 }
 
 
