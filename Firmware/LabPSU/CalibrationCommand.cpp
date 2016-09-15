@@ -30,7 +30,7 @@ void CalibrationCommand::handleSetCommand( const char *params,LabPSU *labPSU )
 	if ( strncasecmp(params,SAVE_COMMAND,sizeof(SAVE_COMMAND))==0)
 	{
 		saveLinearizer(labPSU);
-		//printf("Linearizer saved\r\n");
+		printf("Linearizer saved\r\n");
 	}
 	else if ( strncasecmp(params,NUM_POINTS_COMMAND,sizeof(NUM_POINTS_COMMAND)-1)==0 )
     {
@@ -50,6 +50,7 @@ void CalibrationCommand::handleSetCommand( const char *params,LabPSU *labPSU )
         }
         
         getLinearizer(labPSU).setNumPoints(numPoints);
+        printf("Number of points set to %d\r\n",numPoints);
     }
     else        
 	{
@@ -63,6 +64,7 @@ void CalibrationCommand::handleSetCommand( const char *params,LabPSU *labPSU )
 			point.code = code;
 			point.value = value;
 			getLinearizer(labPSU).setPoint(index,point);
+            printf("Point %d=0x%04X,%f\r\n",index,point.code,(double)point.value);
 		}
 		else
 		{
