@@ -43,4 +43,9 @@ class CalibratePopup(Popup):
         return self.calibration_type
 
     def calibrate_current(self):
-        pass
+        if not self.check_dmm(self.dmm_ip.text):
+            self.dmm_error = "Cannot contact DMM"
+        else:
+            self.dmm_ip_value = self.dmm_ip.text
+            self.calibration_type = Calibrator.CURRENT
+            self.dismiss()

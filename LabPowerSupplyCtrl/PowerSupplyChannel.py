@@ -27,7 +27,7 @@ class PowerSupplyChannel(threading.Thread):
     VADC_COMMAND="VADC"
     IDAC_COMMAND="IDAC"
     IADC_COMMAND="IADC"
-    POLL_PERIOD=1.0
+    POLL_PERIOD=0.1
     VOLTS_DAC_CAL_COMMAND="VDACCal"
     VOLTS_ADC_CAL_COMMAND="VADCCal"
     CURRENT_DAC_CAL_COMMAND="IDACCal"
@@ -45,6 +45,8 @@ class PowerSupplyChannel(threading.Thread):
         self.in_cc_mode_val = LockedThing(0.0)
         self.enabled_val = LockedThing(False)
         self.temp_val = LockedThing(0.0)
+	self.pause_lock = threading.Condition()
+        self.paused = False
 
         if sys.version_info[0] < 3:
             self.command_queue = Queue.Queue()
@@ -56,6 +58,10 @@ class PowerSupplyChannel(threading.Thread):
 
     def run(self):
         while not self.exit_event.wait(self.POLL_PERIOD):
+            self.pause_lock.acquire()
+            while self.paused:
+                self.pause_lock.wait()
+            self.pause_lock.release()
             #
             # If we are not currently connected then try and connect
             #
@@ -108,8 +114,18 @@ class PowerSupplyChannel(threading.Thread):
             self.update_count += 1
 
     def stop(self):
+        self.pause_lock.acquire()
+        self.paused = False
+        self.pause_lock.notify()
+        self.pause_lock.release()
         self.exit_event.set()
         self.join()
+
+    def pause(self,paused):
+        self.pause_lock.acquire()
+        self.paused = paused
+        self.pause_lock.notify()
+        self.pause_lock.release()
 
     # Don't call this - the thread will manage the connection
     def _connect(self):
@@ -184,7 +200,7 @@ class PowerSupplyChannel(threading.Thread):
 
     def save_voltage_dac_cal(self):
         print("Setting %s=%s",(self.VOLTS_DAC_CAL_COMMAND,"save"))
-        self.call_set_command(self.VOLTAGE_DAC_CAL_COMMAND,"save")
+        self.call_set_command(self.VOLTS_DAC_CAL_COMMAND,"save")
 
     def set_voltage_adc_cal_points(self,numPoints):
         self.call_set_command(self.VOLTS_ADC_CAL_COMMAND,("numpoints,%d" % numPoints))
@@ -193,7 +209,7 @@ class PowerSupplyChannel(threading.Thread):
         self.call_set_command(self.VOLTS_ADC_CAL_COMMAND,("%d,%x,%f" % (index,code,measurement)))
 
     def save_voltage_adc_cal(self):
-        self.call_set_command(self.VOLTAGE_ADC_CAL_COMMAND,"save")
+        self.call_set_command(self.VOLTS_ADC_CAL_COMMAND,"save")
 
     def set_current_dac_cal_points(self,numPoints):
         self.call_set_command(self.CURRENT_DAC_CAL_COMMAND,("numpoints,%d" % numPoints))

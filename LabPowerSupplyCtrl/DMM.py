@@ -26,6 +26,6 @@ class DMM():
 
     def read_current(self):
         self.send("SENSE:CURRENT:DC:TERMINALS 10\r\n");
-        self.s.send(bytes("read?\r\n",'UTF-8'));
+        self.send("MEASURE:CURRENT:DC? 10\r\n");
         return float(self.s.recv(300).decode("UTF-8").rstrip());
 

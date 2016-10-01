@@ -28,6 +28,7 @@ class Calibrator(threading.Thread):
         self.exit_event = threading.Event()
         threading.Thread.__init__(self)
         self.values = []
+        print("Calibrator type = ",voltage_or_current);
 
     def stop(self):
         self.exit_event.set()
@@ -42,12 +43,15 @@ class Calibrator(threading.Thread):
         #
         # Write the cal table
         #
+        if self.voltage_or_current == self.VOLTAGE:
+            self.power_supply_channel.set_voltage_dac_cal_points(self.STEPS)
+        else:
+            self.power_supply_channel.set_current_dac_cal_points(self.STEPS)
+
         for i in range(self.STEPS):
             if self.voltage_or_current == self.VOLTAGE:
-                self.power_supply_channel.set_voltage_dac_cal_points(self.STEPS)
                 self.power_supply_channel.set_voltage_dac_cal(i,self.values[i][0],self.values[i][1])
             else:
-                self.power_supply_channel.set_current_dac_cal_points(self.STEPS)
                 self.power_supply_channel.set_current_dac_cal(i,self.values[i][0],self.values[i][1])
 
         if self.voltage_or_current == self.VOLTAGE:
@@ -55,12 +59,15 @@ class Calibrator(threading.Thread):
         else:
             self.power_supply_channel.save_current_dac_cal()
 
+        if self.voltage_or_current == self.VOLTAGE:
+            self.power_supply_channel.set_voltage_adc_cal_points(self.STEPS)
+        else:
+            self.power_supply_channel.set_current_adc_cal_points(self.STEPS)
+
         for i in range(self.STEPS):
             if self.voltage_or_current == self.VOLTAGE:
-                self.power_supply_channel.set_voltage_adc_cal_points(self.STEPS)
                 self.power_supply_channel.set_voltage_adc_cal(i,self.values[i][2],self.values[i][1])
             else:
-                self.power_supply_channel.set_current_adc_cal_points(self.STEPS)
                 self.power_supply_channel.set_current_adc_cal(i,self.values[i][2],self.values[i][1])
 
         if self.voltage_or_current == self.VOLTAGE:
@@ -68,8 +75,8 @@ class Calibrator(threading.Thread):
         else:
             self.power_supply_channel.save_current_adc_cal()
 
-        self.callback.complete(self.values)
         self.power_supply_channel.cal_enable(False)
+        self.callback.complete(self.values)
 
     def is_done(self):
         return self.step_num >= self.STEPS
@@ -92,3 +99,4 @@ class Calibrator(threading.Thread):
         self.values.append((next_count,dmm_reading,adc_reading))
         self.callback.progress( int(float(self.step_num)/float(self.STEPS) * 100.0))
         self.step_num += 1
+

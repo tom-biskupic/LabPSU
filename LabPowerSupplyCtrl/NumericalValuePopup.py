@@ -21,7 +21,7 @@ class NumericalValuePopup(ModalView):
         return self.value
 
     def mv_pressed(self):
-        print("mV Pressed")
+        self.value = float(self.editBox.text)/1000.00
         self.dismiss()
 
     def v_pressed(self):

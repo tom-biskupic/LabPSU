@@ -30,17 +30,17 @@ class ChannelControl(BoxLayout):
     def set_voltage_callback(self,instance):
         if self.channel.is_connected() and instance.get_value() is not None:
             self.channel.set_set_voltage(instance.get_value())
-        self.start_updates();
+        self.control_window.start_updates();
         return False
 
     def set_current_callback(self,instance):
         if self.channel.is_connected() and instance.get_value() is not None:
             self.channel.set_set_current(instance.get_value())
-        self.start_updates();
+        self.control_window.start_updates();
         return False
 
     def set_voltage_clicked(self):
-        self.stop_updates();
+        self.control_window.stop_updates();
         view = NumericalValuePopup()
         #view.set_value(self.set_voltage)
         view.set_current_mode(False)
@@ -49,7 +49,7 @@ class ChannelControl(BoxLayout):
         pass
 
     def set_current_clicked(self):
-        self.stop_updates();
+        self.control_window.stop_updates();
         view = NumericalValuePopup()
         #view.set_value(self.set_current)
         view.set_current_mode(True)
@@ -64,20 +64,21 @@ class ChannelControl(BoxLayout):
 
     def calibrate_chosen(self,instance):
         if instance.get_calibration_type() is not None:
-            self.stop_updates()
-            self.channel.stop()
+            self.control_window.stop_updates()
+            self.channel.pause(True)
             view = CalibrateProgressPopup(self.channel,instance.get_dmm_ip(),instance.get_calibration_type())
             view.bind(on_dismiss=self.calibrate_complete)
             view.open()
 
     def calibrate_complete(self,instance):
-        self.channel.start()
-        self.start_updates();
+        self.channel.pause(False)
+        self.control_window.start_updates();
 
-    def bind_to_psu(self,channel,channel_number,fan_controller):
+    def bind_to_psu(self,channel,channel_number,fan_controller,control_window):
         self.channel = channel
         self.channel_number = channel_number
         self.fan_controller = fan_controller
+        self.control_window = control_window
 
     def update_from_channel(self,dt):
         if self.channel.is_connected():
