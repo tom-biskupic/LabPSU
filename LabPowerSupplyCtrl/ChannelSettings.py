@@ -22,7 +22,7 @@ class ChannelSettings():
         print("Leaving ChannelSettings __init__")
 
     def _make_file_name(self):
-        return "./Channel"+str(self.channelNumber)+".cfg"
+        return os.path.expanduser("~/.labpschannel"+str(self.channelNumber)+".cfg")
 
     def _save(self):
         with open(self._make_file_name(),'wb') as config_file:
