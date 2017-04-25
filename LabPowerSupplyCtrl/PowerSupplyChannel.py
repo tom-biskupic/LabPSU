@@ -10,6 +10,7 @@ else:
 
 from Temp import TempSensor
 from LockedThing import LockedThing
+from ChannelSettings import ChannelSettings
 
 __author__ = 'tom'
 
@@ -33,7 +34,7 @@ class PowerSupplyChannel(threading.Thread):
     CURRENT_DAC_CAL_COMMAND="IDACCal"
     CURRENT_ADC_CAL_COMMAND="IADCCal"
 
-    def __init__(self,file_name,temp_sensor_id):
+    def __init__(self,channelNumber,file_name,temp_sensor_id):
         self.exit_event = threading.Event()
         self.usb_device_filename=file_name
         self.serialPort=None
@@ -47,6 +48,9 @@ class PowerSupplyChannel(threading.Thread):
         self.temp_val = LockedThing(0.0)
 	self.pause_lock = threading.Condition()
         self.paused = False
+        print("Channel about to load settings")
+        self.channel_settings = ChannelSettings(channelNumber)
+        self.loaded_settings = False
 
         if sys.version_info[0] < 3:
             self.command_queue = Queue.Queue()
@@ -72,6 +76,9 @@ class PowerSupplyChannel(threading.Thread):
             # the update
             if self.serialPort is not None:
                 try:
+                    if not self.loaded_settings:
+                        self._load_settings()
+
                     self._process_commands()
                     self._update_from_channel()
                 except Exception:
@@ -113,6 +120,11 @@ class PowerSupplyChannel(threading.Thread):
         else:
             self.update_count += 1
 
+    def _load_settings(self):
+        self.loaded_settings = True
+        self.set_set_voltage(self.channel_settings.get_voltage())
+        self.set_set_current(self.channel_settings.get_current())
+
     def stop(self):
         self.pause_lock.acquire()
         self.paused = False
@@ -150,12 +162,14 @@ class PowerSupplyChannel(threading.Thread):
         return self.set_voltage_val.get_value()
 
     def set_set_voltage(self,voltage):
+        self.channel_settings.set_voltage(voltage)
         self.command_queue.put((self.VSET_COMMAND,str(voltage)))
 
     def get_set_current(self):
         return self.set_current_val.get_value()
 
     def set_set_current(self,current):
+        self.channel_settings.set_current(current)
         self.command_queue.put((self.ISET_COMMAND,str(current)))
 
     def get_output_voltage(self):
