@@ -83,7 +83,7 @@ $EndSheet
 $Sheet
 S 7350 1800 1100 800 
 U 56234429
-F0 "Preregulator" 60
-F1 "Preregulator.sch" 60
+F0 "PreRegulator" 60
+F1 "PreRegulator.sch" 60
 $EndSheet
 $EndSCHEMATC
