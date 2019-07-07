@@ -2,6 +2,8 @@
 import serial
 import threading
 import sys
+import os
+import traceback
 
 if sys.version_info[0] < 3:
     import Queue
@@ -46,7 +48,7 @@ class PowerSupplyChannel(threading.Thread):
         self.in_cc_mode_val = LockedThing(0.0)
         self.enabled_val = LockedThing(False)
         self.temp_val = LockedThing(0.0)
-	self.pause_lock = threading.Condition()
+        self.pause_lock = threading.Condition()
         self.paused = False
         print("Channel about to load settings")
         self.channel_settings = ChannelSettings(channelNumber)
@@ -81,11 +83,15 @@ class PowerSupplyChannel(threading.Thread):
 
                     self._process_commands()
                     self._update_from_channel()
-                except Exception:
+                except Exception as e:
                     # Something failed - just disconnect and re-connect
                     # on the next round
                     self.serialPort = None
-                    print("Caught error in loop - disconnecting", sys.exc_info()[0])
+                    traceback.print_exc(file=sys.stdout)
+#                    exc_type, exc_obj, exc_tb = sys.exc_info()
+#                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+#                    print("Caught error in loop - disconnecting", exc_type, fname, exc_tb.tb_lineno)
+#                    print("Caught error in loop - disconnecting", str(e), sys.exc_info()[0])
         print("Channel exiting")
 
     def _process_commands(self):
@@ -148,6 +154,7 @@ class PowerSupplyChannel(threading.Thread):
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE,
                 bytesize=serial.EIGHTBITS )
+            print("Connected to "+self.usb_device_filename)
         except Exception :
             print("Connect to %s failed" % self.usb_device_filename)
             self.serialPort = None
@@ -248,7 +255,8 @@ class PowerSupplyChannel(threading.Thread):
 
     def call_set_command(self,command,value):
         command_string = command+"="+value+"\n"
-        self.serialPort.write(command_string)
+        # print('call_set_command, Command='+command_string)
+        self.serialPort.write(command_string.encode('utf-8'))
         self.serialPort.readline()
         self.serialPort.readline()
 
@@ -262,9 +270,10 @@ class PowerSupplyChannel(threading.Thread):
 
     def call_get_command(self,command):
         command_string = command+"=?\n"
-        self.serialPort.write(command_string)
+        # print("call_get_command, Command = "+command_string)
+        self.serialPort.write(command_string.encode('utf-8'))
         self.serialPort.readline()
-        return_string = self.serialPort.readline()
+        return_string = self.serialPort.readline().decode('utf-8')
         return_string = return_string.split("=")[1]
         return_string = return_string.rstrip()
         return return_string
