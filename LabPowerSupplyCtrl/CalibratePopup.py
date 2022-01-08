@@ -28,6 +28,12 @@ class CalibratePopup(Popup):
             traceback.print_exc()
             return False
 
+    def get_dmm_ip(self):
+        return self.dmm_ip_value
+
+    def get_calibration_type(self):
+        return self.calibration_type
+
     def calibrate_voltage(self):
         if not self.check_dmm(self.dmm_ip.text):
             self.dmm_error = "Cannot contact DMM"
@@ -35,12 +41,6 @@ class CalibratePopup(Popup):
             self.dmm_ip_value = self.dmm_ip.text
             self.calibration_type = Calibrator.VOLTAGE
             self.dismiss()
-
-    def get_dmm_ip(self):
-        return self.dmm_ip_value
-
-    def get_calibration_type(self):
-        return self.calibration_type
 
     def calibrate_current(self):
         if not self.check_dmm(self.dmm_ip.text):

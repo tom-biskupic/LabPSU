@@ -25,22 +25,22 @@ class ChannelControl(BoxLayout):
 
     def enable_clicked(self,instance,value):
         if self.channel.is_connected():
-            self.channel.enable(value);
+            self.channel.enable(value)
 
     def set_voltage_callback(self,instance):
         if self.channel.is_connected() and instance.get_value() is not None:
             self.channel.set_set_voltage(instance.get_value())
-        self.control_window.start_updates();
+        self.control_window.start_updates()
         return False
 
     def set_current_callback(self,instance):
         if self.channel.is_connected() and instance.get_value() is not None:
             self.channel.set_set_current(instance.get_value())
-        self.control_window.start_updates();
+        self.control_window.start_updates()
         return False
 
     def set_voltage_clicked(self):
-        self.control_window.stop_updates();
+        self.control_window.stop_updates()
         view = NumericalValuePopup()
         #view.set_value(self.set_voltage)
         view.set_current_mode(False)
@@ -49,7 +49,7 @@ class ChannelControl(BoxLayout):
         pass
 
     def set_current_clicked(self):
-        self.control_window.stop_updates();
+        self.control_window.stop_updates()
         view = NumericalValuePopup()
         #view.set_value(self.set_current)
         view.set_current_mode(True)
@@ -72,7 +72,7 @@ class ChannelControl(BoxLayout):
 
     def calibrate_complete(self,instance):
         self.channel.pause(False)
-        self.control_window.start_updates();
+        self.control_window.start_updates()
 
     def bind_to_psu(self,channel,channel_number,fan_controller,control_window):
         self.channel = channel
@@ -82,16 +82,12 @@ class ChannelControl(BoxLayout):
 
     def update_from_channel(self,dt):
         if self.channel.is_connected():
-            set_voltage = self.channel.get_set_voltage()
-            if self.set_voltage != set_voltage:
-                self.set_voltate = set_voltage
             self.set_voltage = self.channel.get_set_voltage()
             self.set_current = self.channel.get_set_current()
             self.output_current = self.channel.get_output_current()
             self.output_voltage = self.channel.get_output_voltage()
             self.in_current_limit = self.channel.in_cc_mode()
             self.enabled = self.channel.is_enabled()
-
         return True
 
     def update_temperature(self,dt):

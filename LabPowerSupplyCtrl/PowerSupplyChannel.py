@@ -13,40 +13,18 @@ else:
 from Temp import TempSensor
 from LockedThing import LockedThing
 from ChannelSettings import ChannelSettings
-
-__author__ = 'tom'
-
+from ChannelState import ChannelState
+from ChannelCommand import SetVoltageCommand, SetCurrentCommand, EnableCommand
+from PowerSupplyChannelConnection import PowerSupplyChannelConnection
 
 class PowerSupplyChannel(threading.Thread):
-    VSET_COMMAND="Vset"
-    ISET_COMMAND="Iset"
-    VOUT_COMMAND="Vout"
-    IOUT_COMMAND="Iout"
-    CCMODE_COMMAND="CCMode"
-    ENABLE_COMMAND="Enable"
-    VOLTAGE_DECIMALS=3
-    CURRENT_DECIMALS=4
-    VDAC_COMMAND="VDAC"
-    VADC_COMMAND="VADC"
-    IDAC_COMMAND="IDAC"
-    IADC_COMMAND="IADC"
     POLL_PERIOD=0.1
-    VOLTS_DAC_CAL_COMMAND="VDACCal"
-    VOLTS_ADC_CAL_COMMAND="VADCCal"
-    CURRENT_DAC_CAL_COMMAND="IDACCal"
-    CURRENT_ADC_CAL_COMMAND="IADCCal"
-
     def __init__(self,channelNumber,file_name,temp_sensor_id):
         self.exit_event = threading.Event()
-        self.usb_device_filename=file_name
-        self.serialPort=None
+        self.connection = PowerSupplyChannelConnection(channelNumber,file_name)
+        self.channel_state = ChannelState()
         self.temp_sensor = TempSensor(temp_sensor_id)
-        self.set_voltage_val = LockedThing(0.0)
-        self.set_current_val = LockedThing(0.0)
-        self.output_voltage_val = LockedThing(0.0)
-        self.output_current_val = LockedThing(0.0)
-        self.in_cc_mode_val = LockedThing(0.0)
-        self.enabled_val = LockedThing(False)
+
         self.temp_val = LockedThing(0.0)
         self.pause_lock = threading.Condition()
         self.paused = False
@@ -62,37 +40,48 @@ class PowerSupplyChannel(threading.Thread):
         self.update_count = 0
         threading.Thread.__init__(self)
 
+    def is_connected(self):
+        return self.connection.is_connected()
+
     def run(self):
         while not self.exit_event.wait(self.POLL_PERIOD):
-            self.pause_lock.acquire()
-            while self.paused:
-                self.pause_lock.wait()
-            self.pause_lock.release()
+            self._check_paused()
             #
             # If we are not currently connected then try and connect
             #
-            if self.serialPort is None:
-                self._connect()
+            if not self.connection.is_connected():
+                self.connection.connect()
+                if self.connection.is_connected():
+                    self._check_settings_loaded()
 
             # If we connected or if we already were connected then do
             # the update
-            if self.serialPort is not None:
+            if self.connection.is_connected():
                 try:
-                    if not self.loaded_settings:
-                        self._load_settings()
-
                     self._process_commands()
                     self._update_from_channel()
                 except Exception as e:
                     # Something failed - just disconnect and re-connect
                     # on the next round
-                    self.serialPort = None
+                    self.connection.close()
                     traceback.print_exc(file=sys.stdout)
+                    self.loaded_settings = False
 #                    exc_type, exc_obj, exc_tb = sys.exc_info()
 #                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 #                    print("Caught error in loop - disconnecting", exc_type, fname, exc_tb.tb_lineno)
 #                    print("Caught error in loop - disconnecting", str(e), sys.exc_info()[0])
         print("Channel exiting")
+
+    def _check_settings_loaded(self):
+        if not self.loaded_settings:
+            self.connection.init_from_settings(self.channel_settings)
+            self.loaded_settings = True
+
+    def _check_paused(self):
+        self.pause_lock.acquire()
+        while self.paused:
+            self.pause_lock.wait()
+        self.pause_lock.release()
 
     def _process_commands(self):
         while not self.command_queue.empty():
@@ -100,24 +89,11 @@ class PowerSupplyChannel(threading.Thread):
             # If we are not connected we just swallow any outstanding commands
             # This is so we don't end up with a back-log if the user does stuff
             # while not connected
-            if self.is_connected():
-                self.call_set_command(command[0],command[1])
+            if self.connection.is_connected():
+                self.connection.execute_command(command)
 
     def _update_from_channel(self):
-        self.set_voltage_val.set_value(round(
-            float(self.call_get_command_float(self.VSET_COMMAND)),
-            self.VOLTAGE_DECIMALS))
-        self.set_current_val.set_value(round(
-            float(self.call_get_command_float(self.ISET_COMMAND)),
-            self.CURRENT_DECIMALS))
-        self.output_voltage_val.set_value(round(
-            float(self.call_get_command_float(self.VOUT_COMMAND)),
-            self.VOLTAGE_DECIMALS))
-        self.output_current_val.set_value(round(
-            float(self.call_get_command_float(self.IOUT_COMMAND)),
-            self.CURRENT_DECIMALS))
-        self.in_cc_mode_val.set_value(self.call_get_command_bool(self.CCMODE_COMMAND))
-        self.enabled_val.set_value(self.call_get_command_bool(self.ENABLE_COMMAND))
+        self.connection.update_channel_state(self.channel_state)
 
         # Throttle temperature updates to one in 5
         if self.update_count == 5:
@@ -125,11 +101,6 @@ class PowerSupplyChannel(threading.Thread):
             self.update_count = 0
         else:
             self.update_count += 1
-
-    def _load_settings(self):
-        self.loaded_settings = True
-        self.set_set_voltage(self.channel_settings.get_voltage())
-        self.set_set_current(self.channel_settings.get_current())
 
     def stop(self):
         self.pause_lock.acquire()
@@ -145,136 +116,63 @@ class PowerSupplyChannel(threading.Thread):
         self.pause_lock.notify()
         self.pause_lock.release()
 
-    # Don't call this - the thread will manage the connection
-    def _connect(self):
-        try:
-            self.serialPort = serial.Serial(
-                port=self.usb_device_filename,
-                baudrate=115200,
-                parity=serial.PARITY_NONE,
-                stopbits=serial.STOPBITS_ONE,
-                bytesize=serial.EIGHTBITS )
-            print("Connected to "+self.usb_device_filename)
-        except Exception :
-            print("Connect to %s failed" % self.usb_device_filename)
-            self.serialPort = None
-
-    def _close(self):
-        self.serialPort = None
-
-    def is_connected(self):
-        return self.serialPort is not None;
-
     def get_set_voltage(self):
-        return self.set_voltage_val.get_value()
+        return self.channel_state.get_set_voltage()
 
     def set_set_voltage(self,voltage):
         self.channel_settings.set_voltage(voltage)
-        self.command_queue.put((self.VSET_COMMAND,str(voltage)))
+        self.command_queue.put(SetVoltageCommand(voltage))
 
     def get_set_current(self):
-        return self.set_current_val.get_value()
+        return self.channel_state.get_set_current()
 
     def set_set_current(self,current):
         self.channel_settings.set_current(current)
-        self.command_queue.put((self.ISET_COMMAND,str(current)))
+        self.command_queue.put(SetCurrentCommand(current))
 
     def get_output_voltage(self):
-        return self.output_voltage_val.get_value()
+        return self.channel_state.get_output_voltage()
 
     def get_output_current(self):
-        return self.output_current_val.get_value()
+        return self.channel_state.get_output_current()
 
     def in_cc_mode(self):
-        return self.in_cc_mode_val.get_value()
+        return self.channel_state.in_cc_mode()
 
     def enable(self,enabled):
-        self.command_queue.put((self.ENABLE_COMMAND,str(enabled)))
-
-    def set_voltage_dac(self,count):
-        self.call_set_command(self.VDAC_COMMAND,("%x" % count))
-
-    def get_voltage_adc(self):
-        return int(self.call_get_command(self.VADC_COMMAND),16)
-
-    def set_current_dac(self,count):
-        self.call_set_command(self.IDAC_COMMAND,("%x" % count))
-
-    def get_current_adc(self):
-        return int(self.call_get_command(self.IADC_COMMAND),16)
+        self.command_queue.put(EnableCommand(enabled))
 
     def is_enabled(self):
-        return self.enabled_val.get_value()
+        return self.channel_state.is_enabled()
+
+    #
+    # Returns a ChannelCalControl for calibrating and storing
+    # the calibration constants for voltage
+    #
+    def get_voltage_cal_controls(self):
+        return self.connection.get_voltage_cal_controls(self.channel_settings)
+
+    #
+    # Returns a ChannelCalControl for calibrating and storing
+    # the calibration constants for voltage
+    #
+    def get_current_cal_controls(self):
+        return self.connection.get_current_cal_controls(self.channel_settings)
 
     def get_temperature(self):
-        return self.temp_sensor.read_temp()
-
-    def set_voltage_dac_cal_points(self,numPoints):
-        param = ("numpoints,%d" % numPoints)
-        print("Setting %s=%s",(self.VOLTS_DAC_CAL_COMMAND,param))
-        self.call_set_command(self.VOLTS_DAC_CAL_COMMAND,param)
-
-    def set_voltage_dac_cal(self,index,code,measurement):
-        param = ("%d,%x,%f" % (index,code,measurement))
-        print("Setting %s=%s",(self.VOLTS_DAC_CAL_COMMAND,param))
-        self.call_set_command(self.VOLTS_DAC_CAL_COMMAND,param)
-
-    def save_voltage_dac_cal(self):
-        print("Setting %s=%s",(self.VOLTS_DAC_CAL_COMMAND,"save"))
-        self.call_set_command(self.VOLTS_DAC_CAL_COMMAND,"save")
-
-    def set_voltage_adc_cal_points(self,numPoints):
-        self.call_set_command(self.VOLTS_ADC_CAL_COMMAND,("numpoints,%d" % numPoints))
-
-    def set_voltage_adc_cal(self,index,code,measurement):
-        self.call_set_command(self.VOLTS_ADC_CAL_COMMAND,("%d,%x,%f" % (index,code,measurement)))
-
-    def save_voltage_adc_cal(self):
-        self.call_set_command(self.VOLTS_ADC_CAL_COMMAND,"save")
-
-    def set_current_dac_cal_points(self,numPoints):
-        self.call_set_command(self.CURRENT_DAC_CAL_COMMAND,("numpoints,%d" % numPoints))
-
-    def set_current_dac_cal(self,index,code,measurement):
-        self.call_set_command(self.CURRENT_DAC_CAL_COMMAND,("%d,%x,%f" % (index,code,measurement)))
-
-    def save_current_dac_cal(self):
-        self.call_set_command(self.CURRENT_DAC_CAL_COMMAND,"save")
-
-    def set_current_adc_cal_points(self,numPoints):
-        self.call_set_command(self.CURRENT_ADC_CAL_COMMAND,("numpoints,%d" % numPoints))
-
-    def set_current_adc_cal(self,index,code,measurement):
-        self.call_set_command(self.CURRENT_ADC_CAL_COMMAND,("%d,%x,%f" % (index,code,measurement)))
-
-    def save_current_adc_cal(self):
-        self.call_set_command(self.CURRENT_ADC_CAL_COMMAND,"save")
+         return self.temp_sensor.read_temp()
 
     def cal_enable(self,enabled):
-        self.call_set_command(self.ENABLE_COMMAND,str(enabled))
-
-    def call_set_command(self,command,value):
-        command_string = command+"="+value+"\n"
-        # print('call_set_command, Command='+command_string)
-        self.serialPort.write(command_string.encode('utf-8'))
-        self.serialPort.readline()
-        self.serialPort.readline()
-
-    def call_get_command_float(self,command):
-        value = self.call_get_command(command)
-        return float(value)
-
-    def call_get_command_bool(self,command):
-        value = self.call_get_command(command)
-        return value.lower() == "true"
-
-    def call_get_command(self,command):
-        command_string = command+"=?\n"
-        # print("call_get_command, Command = "+command_string)
-        self.serialPort.write(command_string.encode('utf-8'))
-        self.serialPort.readline()
-        return_string = self.serialPort.readline().decode('utf-8')
-        return_string = return_string.split("=")[1]
-        return_string = return_string.rstrip()
-        return return_string
+        #
+        # This looks redundant but if enabling cal mode you have to turn off
+        # the thread first and if disabling cal mode then the reverse
+        #
+        if not enabled:
+            self.connection.close()
+            self.connection.connect()
+            self.connection.set_is_enabled(False)
+            self.pause(False)
+        else:
+            self.pause(True)
+            self.connection.set_is_enabled(True)
 

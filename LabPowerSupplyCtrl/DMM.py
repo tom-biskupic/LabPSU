@@ -11,10 +11,7 @@ class DMM():
         print(self.s.recv(300).decode("UTF-8"))
 
     def send(self,str):
-        if "linux" in sys.platform:
-            self.s.send(str)
-        else:
-            self.s.send(bytes(str),'UTF-8')
+        self.s.send(bytes(str,'UTF-8'))
  
     def close(self):
         self.s.close()

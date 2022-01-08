@@ -28,6 +28,3 @@ class TempSensor():
        temp_expr = file_contents[1].split(" ")[9]
        temp_string = temp_expr.split("=")[1]
        return float(temp_string.strip()) / 1000.0
-      
-
-

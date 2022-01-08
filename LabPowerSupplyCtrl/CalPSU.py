@@ -19,15 +19,15 @@ class DMM():
         return self.s.recv(300).decode("UTF-8").rstrip()
 
     def read_current(self):
-        self.s.send("SENSE:CURRENT:DC:TERMINALS 10\r\n");
+        self.s.send("SENSE:CURRENT:DC:TERMINALS 10\r\n")
         self.s.send("read?\r\n");
-        return self.s.recv(300).decode("UTF-8").rstrip();
+        return self.s.recv(300).decode("UTF-8").rstrip()
 
 dmm = DMM()
 
 dmm.connect("192.168.1.220")
 
-psu = PowerSupplyChannelAPI("/dev/ttyACM0");
+psu = PowerSupplyChannelAPI("/dev/ttyACM0")
 psu.connect()
 
 def voltage_dac_calibrate():
@@ -98,7 +98,6 @@ def current_adc_calibrate():
         psu.enable("False")
         countAsString = "0x%x" % readCount
         print("        {"+countAsString+",    "+current+"},")
-	
         time.sleep(4.0)
         count += 0xffff/32;
 

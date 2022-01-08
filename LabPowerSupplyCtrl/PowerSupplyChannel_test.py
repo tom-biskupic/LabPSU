@@ -7,16 +7,20 @@ import builtins
 from unittest.mock import patch
 from unittest.mock import mock_open, Mock, MagicMock
 
-from PowerSupplyChannelAPI import PowerSupplyChannelAPI
+from PowerSupplyChannel import PowerSupplyChannel
 
 
 class TestPowerSupplyChannel(unittest.TestCase):
 
-    def make_fixture(self):
-        with unittest.mock.patch('builtins.open') as m:
-            channel = PowerSupplyChannelAPI("test")
-            m.assert_called_once_with("test","r+")
-            return channel
+    TEST_CHANNEL_NUMBER=1
+    TEST_TEMP_SENSOR_ID=22
+
+    @patch('ChannelSettings.ChannelSettings')
+    def make_fixture(self,ChannelSettingsClassMock):
+        mock_channel_settings = Mock()
+        ChannelSettingsClassMock.return_value = mock_channel_settings
+        channel = PowerSupplyChannel(self.TEST_CHANNEL_NUMBER,"test",self.TEST_TEMP_SENSOR_ID)
+        return channel
 
     def test_get_set_voltage(self):
         fixture = self.make_fixture()
@@ -65,7 +69,7 @@ class TestPowerSupplyChannel(unittest.TestCase):
 
     def setup_set_command_expectations(self,fixture,command_name,value):
         fixture.tty.write.assert_called_once_with("%s=%s\n" % ( command_name,value) )
-        fixture.tty.readline.assert_called_once();
+        fixture.tty.readline.assert_called_once()
 
     def setup_get_expectaton(self,fixture,command,value):
         fixture.tty.readline.return_value = "%s=%s\n" % (command,value)
