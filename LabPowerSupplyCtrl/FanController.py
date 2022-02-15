@@ -31,7 +31,8 @@ class FanController():
         return max_temp
  
     def update_fan(self):
-        self.set_fan(self.find_max_temp())
+        pass
+        # self.set_fan(self.find_max_temp())
 
     def set_fan(self,temp):
         duty=0

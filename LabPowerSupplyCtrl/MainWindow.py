@@ -10,7 +10,7 @@ from PowerSupplyChannel import PowerSupplyChannel
 from FanController import FanController
 import PowerInputControl
 from ChannelControl import ChannelControl
-
+from SCPIControl import SCPITCPServer
 class ControlWindow(BoxLayout):
     channel1 = ObjectProperty(None)
     channel2 = ObjectProperty(None)
@@ -36,6 +36,11 @@ class ControlWindow(BoxLayout):
             self.channel2.bind_to_psu(self.psuChannel2,2,fan_controller,self)
             self.channel3.bind_to_psu(self.psuChannel3,3,fan_controller,self)
 
+            print("Creating SCPI")
+            self.SCPIControl = SCPITCPServer([self.psuChannel1,self.psuChannel2,self.psuChannel3])
+            print("Starting SCPI")
+            self.SCPIControl.start()
+            print("Started SCPI")
             self.start_updates()
         except:
             print("Unexpected error:", sys.exc_info()[0])
@@ -52,6 +57,7 @@ class ControlWindow(BoxLayout):
       self.channel3.stop_updates()
 
     def shutdown(self):
+        self.SCPIControl.stop()
         if self.psuChannel1 is not None:
             self.psuChannel1.stop()
         if self.psuChannel2 is not None:
